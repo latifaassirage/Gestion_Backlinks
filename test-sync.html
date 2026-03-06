@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Synchronisation Staff-Admin</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .test { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        .warning { background: #fff3cd; border-color: #ffeaa7; }
+        pre { background: #f8f9fa; padding: 10px; overflow-x: auto; max-height: 300px; }
+        .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .role-section { border: 1px solid #ddd; padding: 15px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <h1>🔄 Test Synchronisation Staff-Admin</h1>
+    <p><strong>Objectif:</strong> Vérifier que Staff et Admin voient exactement les mêmes données</p>
+    
+    <div class="test">
+        <h3>1. Test Login Admin</h3>
+        <button onclick="testLogin('admin')">Tester Login Admin</button>
+        <div id="admin-login-result"></div>
+    </div>
+
+    <div class="test">
+        <h3>2. Test Login Staff</h3>
+        <button onclick="testLogin('staff')">Tester Login Staff</button>
+        <div id="staff-login-result"></div>
+    </div>
+
+    <div class="test">
+        <h3>3. Comparaison des Données</h3>
+        <button onclick="compareData()">Comparer les données</button>
+        <div id="comparison-result"></div>
+    </div>
+
+    <div class="comparison" id="data-comparison" style="display: none;">
+        <div class="role-section">
+            <h4>👑 Admin Data</h4>
+            <div id="admin-data"></div>
+        </div>
+        <div class="role-section">
+            <h4>👤 Staff Data</h4>
+            <div id="staff-data"></div>
+        </div>
+    </div>
+
+    <script>
+        let adminToken = null;
+        let staffToken = null;
+
+        async function testLogin(role) {
+            const credentials = role === 'admin' 
+                ? { email: 'admin@agency.com', password: 'Admin123!' }
+                : { email: 'staff@agency.com', password: 'Staff123!' };
+            
+            const resultDiv = document.getElementById(`${role}-login-result`);
+            
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify(credentials)
+                });
+                
+                const data = await response.json();
+                console.log(`${role} login response:`, data);
+                
+                if (response.ok && data.token) {
+                    if (role === 'admin') {
+                        adminToken = data.token;
+                    } else {
+                        staffToken = data.token;
+                    }
+                    
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <h4>✅ ${role} Login Success</h4>
+                            <p>User: ${data.user.name} (${data.user.role})</p>
+                            <p>Token: ${data.token.substring(0, 50)}...</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            <h4>❌ ${role} Login Failed</h4>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h4>❌ Network Error</h4>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function fetchData(token, role) {
+            if (!token) {
+                return { error: 'No token' };
+            }
+
+            try {
+                const config = {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json',
+                    }
+                };
+                
+                const [clientsRes, backlinksRes] = await Promise.all([
+                    fetch('http://127.0.0.1:8000/api/clients', config),
+                    fetch('http://127.0.0.1:8000/api/backlinks', config)
+                ]);
+                
+                const clients = await clientsRes.json();
+                const backlinks = await backlinksRes.json();
+                
+                return {
+                    clients: clients,
+                    backlinks: backlinks,
+                    stats: {
+                        totalClients: Array.isArray(clients) ? clients.length : 0,
+                        totalBacklinks: Array.isArray(backlinks) ? backlinks.length : 0,
+                        liveBacklinks: Array.isArray(backlinks) ? backlinks.filter(b => b.status === 'Live').length : 0,
+                        pendingBacklinks: Array.isArray(backlinks) ? backlinks.filter(b => b.status === 'Pending').length : 0,
+                        lostBacklinks: Array.isArray(backlinks) ? backlinks.filter(b => b.status === 'Lost').length : 0,
+                    }
+                };
+            } catch (error) {
+                return { error: error.message };
+            }
+        }
+
+        async function compareData() {
+            const resultDiv = document.getElementById('comparison-result');
+            
+            if (!adminToken || !staffToken) {
+                resultDiv.innerHTML = `
+                    <div class="warning">
+                        <h4>⚠️ Veuillez d'abord vous connecter avec Admin et Staff</h4>
+                    </div>
+                `;
+                return;
+            }
+
+            console.log('🔄 Début de la comparaison des données...');
+            
+            const [adminData, staffData] = await Promise.all([
+                fetchData(adminToken, 'admin'),
+                fetchData(staffToken, 'staff')
+            ]);
+
+            console.log('📊 Admin Data:', adminData);
+            console.log('👤 Staff Data:', staffData);
+
+            // Afficher les données brutes
+            document.getElementById('admin-data').innerHTML = `
+                <h5>Clients (${adminData.stats?.totalClients || 0})</h5>
+                <pre>${JSON.stringify(adminData.clients, null, 2)}</pre>
+                <h5>Backlinks (${adminData.stats?.totalBacklinks || 0})</h5>
+                <pre>${JSON.stringify(adminData.backlinks, null, 2)}</pre>
+            `;
+
+            document.getElementById('staff-data').innerHTML = `
+                <h5>Clients (${staffData.stats?.totalClients || 0})</h5>
+                <pre>${JSON.stringify(staffData.clients, null, 2)}</pre>
+                <h5>Backlinks (${staffData.stats?.totalBacklinks || 0})</h5>
+                <pre>${JSON.stringify(staffData.backlinks, null, 2)}</pre>
+            `;
+
+            document.getElementById('data-comparison').style.display = 'grid';
+
+            // Comparer les statistiques
+            const statsMatch = JSON.stringify(adminData.stats) === JSON.stringify(staffData.stats);
+            const clientsMatch = JSON.stringify(adminData.clients) === JSON.stringify(staffData.clients);
+            const backlinksMatch = JSON.stringify(adminData.backlinks) === JSON.stringify(staffData.backlinks);
+
+            resultDiv.innerHTML = `
+                <div class="${statsMatch && clientsMatch && backlinksMatch ? 'success' : 'error'}">
+                    <h4>${statsMatch && clientsMatch && backlinksMatch ? '✅' : '❌'} Résultat de la synchronisation</h4>
+                    <ul>
+                        <li><strong>Statistiques:</strong> ${statsMatch ? '✅ Identiques' : '❌ Différentes'}</li>
+                        <li><strong>Clients:</strong> ${clientsMatch ? '✅ Identiques' : '❌ Différents'}</li>
+                        <li><strong>Backlinks:</strong> ${backlinksMatch ? '✅ Identiques' : '❌ Différents'}</li>
+                    </ul>
+                    ${!statsMatch ? `<p><strong>Différence stats:</strong> Admin=${JSON.stringify(adminData.stats)} vs Staff=${JSON.stringify(staffData.stats)}</p>` : ''}
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

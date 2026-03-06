@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test React Login</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <h1>Test Login avec Axios (comme React)</h1>
+    <button onclick="testStaffLogin()">Tester Staff Login</button>
+    <button onclick="testAdminLogin()">Tester Admin Login</button>
+    <div id="result"></div>
+
+    <script>
+        // Configuration exacte comme api-simple.js
+        const api = axios.create({
+            baseURL: "http://127.0.0.1:8000/api",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+            timeout: 10000,
+        });
+
+        async function testStaffLogin() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<h2>🔄 Test Staff Login...</h2>';
+            
+            try {
+                console.log('Attempting staff login...');
+                const res = await api.post("/login", {
+                    email: 'staff@agency.com',
+                    password: 'Staff123!'
+                });
+                
+                console.log('Staff response:', res.data);
+                
+                if (res.data.token) {
+                    resultDiv.innerHTML = `
+                        <div style="color: green;">
+                            <h3>✅ Staff Login SUCCESS!</h3>
+                            <p><strong>Email:</strong> ${res.data.user.email}</p>
+                            <p><strong>Role:</strong> ${res.data.user.role}</p>
+                            <p><strong>Token:</strong> ${res.data.token.substring(0, 30)}...</p>
+                            <p><strong>Redirection:</strong> /staff/dashboard</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div style="color: orange;">
+                            <h3>⚠️ Staff Login - No Token</h3>
+                            <p>Response received but no token</p>
+                        </div>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('Staff login error:', error);
+                resultDiv.innerHTML = `
+                    <div style="color: red;">
+                        <h3>❌ Staff Login FAILED</h3>
+                        <p><strong>Status:</strong> ${error.response?.status}</p>
+                        <p><strong>Message:</strong> ${error.response?.data?.message || error.message}</p>
+                        <p><strong>Full Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function testAdminLogin() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<h2>🔄 Test Admin Login...</h2>';
+            
+            try {
+                console.log('Attempting admin login...');
+                const res = await api.post("/login", {
+                    email: 'admin@agency.com',
+                    password: 'Admin123!'
+                });
+                
+                console.log('Admin response:', res.data);
+                
+                if (res.data.token) {
+                    resultDiv.innerHTML = `
+                        <div style="color: green;">
+                            <h3>✅ Admin Login SUCCESS!</h3>
+                            <p><strong>Email:</strong> ${res.data.user.email}</p>
+                            <p><strong>Role:</strong> ${res.data.user.role}</p>
+                            <p><strong>Token:</strong> ${res.data.token.substring(0, 30)}...</p>
+                            <p><strong>Redirection:</strong> /dashboard</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div style="color: orange;">
+                            <h3>⚠️ Admin Login - No Token</h3>
+                            <p>Response received but no token</p>
+                        </div>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('Admin login error:', error);
+                resultDiv.innerHTML = `
+                    <div style="color: red;">
+                        <h3>❌ Admin Login FAILED</h3>
+                        <p><strong>Status:</strong> ${error.response?.status}</p>
+                        <p><strong>Message:</strong> ${error.response?.data?.message || error.message}</p>
+                        <p><strong>Full Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

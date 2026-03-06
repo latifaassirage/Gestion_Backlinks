@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Report;
+use Illuminate\Http\Request;
+
+class ReportController extends Controller
+{
+    public function index()
+    {
+        return Report::all();
+    }
+
+    public function show($id)
+    {
+        return Report::findOrFail($id);
+    }
+}

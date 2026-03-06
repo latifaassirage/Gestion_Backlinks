@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Direct API</title>
+</head>
+<body>
+    <h1>Test Direct Staff Login</h1>
+    <button onclick="testDirect()">Tester maintenant</button>
+    <div id="result"></div>
+
+    <script>
+        async function testDirect() {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: 'staff@agency.com',
+                        password: 'Staff123!'
+                    })
+                });
+                
+                const data = await response.json();
+                console.log('Response:', data);
+                
+                document.getElementById('result').innerHTML = `
+                    <h3>Status: ${response.status}</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').innerHTML = `
+                    <h3>Error: ${error.message}</h3>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
