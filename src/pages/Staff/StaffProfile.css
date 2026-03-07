@@ -1,0 +1,117 @@
+.staff-profile {
+  background-color: #f9fafb;
+  min-height: 100vh;
+}
+
+.profile-container {
+  display: flex;
+  justify-content: center;
+  padding: 60px 20px;
+}
+
+.profile-card {
+  width: 100%;
+  max-width: 500px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+.profile-header {
+  padding: 25px;
+  border-bottom: 1px solid #f3f4f6;
+  text-align: center;
+  background: white;
+}
+
+.profile-header h2 {
+  color: #111827;
+  font-size: 1.4rem;
+  margin: 0;
+  font-weight: 700;
+}
+
+.profile-content {
+  padding: 30px;
+}
+
+.info-item {
+  margin-bottom: 20px;
+}
+
+.info-item label, .form-group label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #6b7280;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.info-item p {
+  font-size: 1rem;
+  color: #111827;
+  background: #f9fafb;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 0;
+  border: 1px solid #e5e7eb;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: white;
+  box-sizing: border-box;
+}
+
+.info-actions, .form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.edit-btn, .btn-save {
+  background: #FF6B35;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.logout-btn, .btn-cancel {
+  background: white;
+  color: #4b5563;
+  border: 1px solid #d1d5db;
+  padding: 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.edit-btn:hover, .btn-save:hover {
+  background: #e55a2b;
+}
+
+.message {
+  margin: 10px 30px;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.message.success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+.message.error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+.loading { text-align: center; padding: 50px; color: #6b7280; }
