@@ -8,7 +8,7 @@ function AddSourceModal({ onClose, onSave, source }) {
   const [domain, setDomain] = useState(source?.domain || "");
   const [qualityScore, setQualityScore] = useState(source?.quality_score || 1);
   const [dr, setDr] = useState(source?.dr || "");
-  const [traffic, setTraffic] = useState(source?.traffic || "");
+  const [traffic, setTraffic] = useState(source?.traffic_estimated || "");
   const [notes, setNotes] = useState(source?.notes || "");
 
   const handleSubmit = async (e) => {
@@ -17,7 +17,7 @@ function AddSourceModal({ onClose, onSave, source }) {
       domain,
       quality_score: qualityScore,
       dr,
-      traffic: traffic ? Number(traffic) : null,
+      traffic_estimated: traffic ? Number(traffic) : null,
       notes
     };
     await onSave(newSource, source?.id);
@@ -168,7 +168,7 @@ export default function Sources() {
                     </td>
                     <td className="quality-score">{renderQualityStars(source.quality_score)}</td>
                     <td className="dr">{source.dr || '-'}</td>
-                    <td className="traffic">{source.traffic !== undefined && source.traffic !== null ? Number(source.traffic).toLocaleString() : '-'}</td>
+                    <td className="traffic">{source.traffic_estimated !== undefined && source.traffic_estimated !== null ? Number(source.traffic_estimated).toLocaleString() : '-'}</td>
                     <td className="notes">{source.notes || '-'}</td>
                     {isAdmin && (
                       <td className="actions">

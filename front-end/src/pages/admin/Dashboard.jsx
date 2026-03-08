@@ -164,8 +164,8 @@ const Dashboard = () => {
         monthlyBacklinks
       });
       
-      // Set monthly backlinks data for table
-      setMonthlyBacklinksData(monthlyBacklinksList.slice(0, 3)); // Show only 3 most recent
+      // Set monthly backlinks data for table - show ALL backlinks for current month
+      setMonthlyBacklinksData(monthlyBacklinksList); // Show all backlinks, no limit
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
       console.error('Error response:', error.response?.data);

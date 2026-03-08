@@ -25,7 +25,7 @@ class BacklinkController extends Controller
             'status'=>'nullable|in:Pending,Live,Lost',
             'cost'=>'nullable|numeric|min:0',
             'quality_score'=>'nullable|integer|min:1|max:5',
-            'traffic'=>'nullable|integer',
+            'traffic_estimated'=>'nullable|integer',
         ]);
 
         // Vérification doublon
@@ -59,7 +59,7 @@ class BacklinkController extends Controller
             'status'=>'nullable|in:Pending,Live,Lost',
             'cost'=>'nullable|numeric|min:0',
             'quality_score'=>'nullable|integer|min:1|max:5',
-            'traffic'=>'nullable|integer',
+            'traffic_estimated'=>'nullable|integer',
         ]);
         $backlink->update($data);
         return response()->json($backlink);

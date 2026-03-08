@@ -10,14 +10,14 @@ return new class extends Migration
     {
         Schema::table('backlinks', function (Blueprint $table) {
             $table->integer('quality_score')->nullable()->after('cost');
-            $table->integer('traffic')->nullable()->after('quality_score');
+            $table->integer('traffic_estimated')->nullable()->after('quality_score');
         });
     }
 
     public function down(): void
     {
         Schema::table('backlinks', function (Blueprint $table) {
-            $table->dropColumn(['quality_score', 'traffic']);
+            $table->dropColumn(['quality_score', 'traffic_estimated']);
         });
     }
 };

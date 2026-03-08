@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import api from "../../api/api";
 import StaffNavbar from "../../components/StaffNavbar";
 import "./StaffBacklinks.css";
@@ -18,18 +17,17 @@ export default function StaffBacklinks() {
     target_url: "",
     anchor_text: "",
     placement_url: "",
-    date_added: new Date().toISOString().split('T')[0], // Fixed: Use date_added instead of date
+    date_added: new Date().toISOString().split('T')[0],
     status: "Pending",
     cost: "",
     quality_score: 3,
-    traffic: 0 // Added traffic field
+    traffic_estimated: 0
   });
 
   useEffect(() => {
     fetchData();
   }, []);
 
-  // Auto-fill quality_score when source site is selected
   useEffect(() => {
     if (formData.source_site_id && sources.length > 0) {
       const selectedSource = sources.find(source => source.id === parseInt(formData.source_site_id));
@@ -42,12 +40,10 @@ export default function StaffBacklinks() {
     }
   }, [formData.source_site_id, sources]);
 
-  // Real-time sync: Update sources when quality is manually changed
   useEffect(() => {
     if (formData.source_site_id && formData.quality_score) {
       const sourceIndex = sources.findIndex(s => s.id === parseInt(formData.source_site_id));
       if (sourceIndex !== -1) {
-        // Update the source quality in real-time
         const updatedSources = [...sources];
         updatedSources[sourceIndex] = {
           ...updatedSources[sourceIndex],
@@ -56,16 +52,15 @@ export default function StaffBacklinks() {
         setSources(updatedSources);
       }
     }
-  }, [formData.quality_score]);
+  }, [formData.quality_score, formData.source_site_id, sources]);
 
-  // Auto-fill traffic when source site is selected
   useEffect(() => {
     if (formData.source_site_id && sources.length > 0) {
       const selectedSource = sources.find(source => source.id === parseInt(formData.source_site_id));
       if (selectedSource) {
         setFormData(prev => ({
           ...prev,
-          traffic: parseInt(selectedSource.traffic || selectedSource.traffic_estimated || 0) // Auto-fill traffic from source
+          traffic_estimated: parseInt(selectedSource.traffic_estimated || selectedSource.traffic || 0)
         }));
       }
     }
@@ -84,34 +79,9 @@ export default function StaffBacklinks() {
       setSources(sourcesRes.data);
     } catch (error) {
       console.error("Error fetching data:", error);
-      // Données fictives pour le développement
-      setBacklinks([
-        {
-          id: 1,
-          client_id: 1,
-          source_site_id: 1,
-          source_site: { id: 1, domain: "Digitalmarketing.com", quality_score: 4, traffic: 50000 },
-          client: { id: 1, company_name: "Digital Agency" },
-          quality_score: 4,
-          traffic: 50000,
-          type: "Guest Post",
-          target_url: "https://clienta.com",
-          anchor_text: "best service",
-          placement_url: "https://example.com/blog/post",
-          date: "2024-01-15",
-          status: "Live",
-          cost: 150
-        }
-      ]);
-      setClients([
-        { id: 1, company_name: "Client A", website: "https://clienta.com" },
-        { id: 2, company_name: "Client B", website: "https://clientb.com" }
-      ]);
-      setSources([
-        { id: 1, domain: "Digitalmarketing.com", quality_score: 4, traffic: 50000 },
-        { id: 2, domain: "SEOExperts.com", quality_score: 5, traffic: 75000 },
-        { id: 3, domain: "BacklinkPro.com", quality_score: 3, traffic: 25000 }
-      ]);
+      setBacklinks([]);
+      setClients([]);
+      setSources([]);
     } finally {
       setLoading(false);
     }
@@ -141,63 +111,40 @@ export default function StaffBacklinks() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Vérification des doublons
     if (!editingBacklink && checkDuplicate(formData.client_id, formData.source_site_id)) {
       const sourceSite = sources.find(s => s.id === formData.source_site_id);
       const confirmDuplicate = window.confirm(
-        `Un backlink existe déjà pour ce client sur le site "${sourceSite?.domain || 'Site inconnu'}". Voulez-vous continuer ?`
+        `A backlink already exists for this client on "${sourceSite?.domain || 'Unknown site'}". Continue?`
       );
-      if (!confirmDuplicate) {
-        return;
-      }
+      if (!confirmDuplicate) return;
     }
 
     try {
-      // Get quality score and traffic from selected source
       const source = sources.find(s => s.id === formData.source_site_id);
       const submitData = {
         ...formData,
         quality_score: source?.quality_score || 3,
-        traffic: parseInt(source?.traffic || source?.traffic_estimated || 0) // Fixed: Ensure integer and not null
-      };  
+        traffic_estimated: parseInt(source?.traffic_estimated || source?.traffic || 0)
+      };
       
       if (editingBacklink) {
         await api.put(`/backlinks/${editingBacklink.id}`, submitData);
-        alert("Backlink modifié avec succès !");
+        alert("Backlink updated successfully!");
       } else {
         await api.post("/backlinks", submitData);
-        alert("Backlink ajouté avec succès !");
+        alert("Backlink added successfully!");
       }
       
       resetForm();
       fetchData();
     } catch (error) {
       console.error("Error saving backlink:", error);
-      
-      // Handle specific error cases - Keep error alerts
-      if (error.response) {
-        if (error.response.status === 409) {
-          alert("Erreur: Ce backlink existe déjà pour ce client sur ce site source.");
-        } else if (error.response.status === 422) {
-          const errors = error.response.data.errors;
-          const errorMessages = Object.values(errors).flat().join('\n');
-          alert("Erreur de validation:\n" + errorMessages);
-        } else if (error.response.status === 500) {
-          alert("Erreur serveur: Veuillez réessayer plus tard.");
-        } else {
-          alert(`Erreur: ${error.response.data.message || 'Erreur lors de l\'enregistrement du backlink'}`);
-        }
-      } else if (error.request) {
-        alert("Erreur réseau: Vérifiez votre connexion internet.");
-      } else {
-        alert("Erreur lors de l'enregistrement du backlink: " + error.message);
-      }
+      alert("Error saving backlink. Please check console for details.");
     }
   };
 
   const handleEdit = (backlink) => {
     setEditingBacklink(backlink);
-    
     setFormData({
       client_id: backlink.client_id,
       source_site_id: backlink.source_site_id,
@@ -205,16 +152,14 @@ export default function StaffBacklinks() {
       target_url: backlink.target_url,
       anchor_text: backlink.anchor_text,
       placement_url: backlink.placement_url,
-      date_added: backlink.date_added || backlink.date, // Fixed: Use date_added
+      date_added: backlink.date_added || backlink.date,
       status: backlink.status,
       cost: backlink.cost,
       quality_score: backlink.quality_score || 3,
-      traffic: parseInt(backlink.traffic || 0) // Added traffic field
+      traffic_estimated: parseInt(backlink.traffic_estimated || 0)
     });
     setShowForm(true);
   };
-
-  // Le staff ne peut pas supprimer de backlinks
 
   const resetForm = () => {
     setFormData({
@@ -224,11 +169,11 @@ export default function StaffBacklinks() {
       target_url: "",
       anchor_text: "",
       placement_url: "",
-      date_added: new Date().toISOString().split('T')[0], // Fixed: Use date_added
+      date_added: new Date().toISOString().split('T')[0],
       status: "Pending",
       cost: "",
       quality_score: 3,
-      traffic: 0 // Added traffic field
+      traffic_estimated: 0
     });
     setEditingBacklink(null);
     setShowForm(false);
@@ -236,14 +181,14 @@ export default function StaffBacklinks() {
 
   const getClientName = (clientId) => {
     const client = clients.find(c => c.id === clientId);
-    return client ? client.company_name : "Client inconnu";
+    return client ? client.company_name : "Unknown Client";
   };
 
   if (loading) {
     return (
       <div className="staff-backlinks">
         <StaffNavbar />
-        <div className="loading">Loading backlinks...</div>
+        <div className="loading">Loading...</div>
       </div>
     );
   }
@@ -252,13 +197,8 @@ export default function StaffBacklinks() {
     <div className="staff-backlinks">
       <StaffNavbar />
       <div className="page-header">
-        <div className="header-content">
-          <h1>Backlinks Management</h1>
-        </div>
-        <button 
-          className="btn btn-primary" 
-          onClick={() => setShowForm(!showForm)}
-        >
+        <h1>Backlinks Management</h1>
+        <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
           {showForm ? "Cancel" : "Add Backlink"}
         </button>
       </div>
@@ -270,182 +210,78 @@ export default function StaffBacklinks() {
             <div className="form-grid">
               <div className="form-group">
                 <label>Client *</label>
-                <select 
-                  value={formData.client_id} 
-                  onChange={(e) => handleClientChange(e.target.value)}
-                  required
-                >
+                <select value={formData.client_id} onChange={(e) => handleClientChange(e.target.value)} required>
                   <option value="">Select a client</option>
-                  {clients.map(client => (
-                    <option key={client.id} value={client.id}>
-                      {client.company_name}
-                    </option>
-                  ))}
+                  {clients.map(client => <option key={client.id} value={client.id}>{client.company_name}</option>)}
                 </select>
               </div>
-
               <div className="form-group">
                 <label>Source Site *</label>
-                <select 
-                  value={formData.source_site_id} 
-                  onChange={(e) => handleSourceChange(e.target.value)}
-                  required
-                >
+                <select value={formData.source_site_id} onChange={(e) => handleSourceChange(e.target.value)} required>
                   <option value="">Select a source site</option>
-                  {sources.map(source => (
-                    <option key={source.id} value={source.id}>
-                      {source.domain} (Quality: {source.quality_score || 3}/5, Traffic: {source.traffic_estimated || 'N/A'})
-                    </option>
-                  ))}
+                  {sources.map(source => <option key={source.id} value={source.id}>{source.domain}</option>)}
                 </select>
               </div>
-
-              <div className="form-group">
-                <label>Quality Score (Auto-filled from Source)</label>
-                <div className="quality-score-container">
-                  <div className="quality-label">Quality Score: {formData.quality_score} ⭐</div>
-                  <div className="quality-progress-bar">
-                    <div 
-                      className="quality-progress-fill" 
-                      style={{
-                        width: `${(formData.quality_score / 5) * 100}%`,
-                        backgroundColor: formData.quality_score >= 4 ? '#10B981' : 
-                                       formData.quality_score >= 3 ? '#F59E0B' : '#EF4444'
-                      }}
-                    ></div>
-                  </div>
-                  <div className="quality-stars">
-                    <span className={`quality-score score-${formData.quality_score}`}>
-                      {'★'.repeat(formData.quality_score)}{'☆'.repeat(5 - formData.quality_score)}
-                    </span>
-                    <span className="score-text"> ({formData.quality_score}/5)</span>
-                  </div>
-                  <select 
-                    value={formData.quality_score} 
-                    onChange={(e) => setFormData({...formData, quality_score: parseInt(e.target.value)})}
-                    className="quality-select"
-                  >
-                    {[1,2,3,4,5].map(n => <option key={n} value={n}>{n} ⭐</option>)}
-                  </select>
-                </div>
-              </div>
-
               <div className="form-group">
                 <label>Type *</label>
-                <select 
-                  value={formData.type} 
-                  onChange={(e) => setFormData({...formData, type: e.target.value})}
-                  required
-                >
+                <select value={formData.type} onChange={(e) => setFormData({...formData, type: e.target.value})} required>
                   <option value="Guest Post">Guest Post</option>
                   <option value="Directory">Directory</option>
                   <option value="Comment">Comment</option>
                   <option value="Forum">Forum</option>
                   <option value="Social">Social Media</option>
-                  <option value="Other">Autre</option>
                 </select>
               </div>
-
               <div className="form-group">
                 <label>Target URL *</label>
-                <input 
-                  type="url" 
-                  placeholder="https://client-website.com/page"
-                  value={formData.target_url} 
-                  onChange={(e) => setFormData({...formData, target_url: e.target.value})}
-                  required
-                />
+                <input type="url" value={formData.target_url} onChange={(e) => setFormData({...formData, target_url: e.target.value})} required />
               </div>
-
               <div className="form-group">
                 <label>Anchor Text *</label>
-                <input 
-                  type="text" 
-                  placeholder="Anchor text"
-                  value={formData.anchor_text} 
-                  onChange={(e) => setFormData({...formData, anchor_text: e.target.value})}
-                  required
-                />
+                <input type="text" value={formData.anchor_text} onChange={(e) => setFormData({...formData, anchor_text: e.target.value})} required />
               </div>
-
               <div className="form-group">
                 <label>Placement URL *</label>
-                <input 
-                  type="url" 
-                  placeholder="https://example.com/where-link-placed"
-                  value={formData.placement_url} 
-                  onChange={(e) => setFormData({...formData, placement_url: e.target.value})}
-                  required
-                />
+                <input type="url" value={formData.placement_url} onChange={(e) => setFormData({...formData, placement_url: e.target.value})} required />
               </div>
-
               <div className="form-group">
                 <label>Date *</label>
-                <input 
-                  type="date" 
-                  value={formData.date_added} 
-                  onChange={(e) => setFormData({...formData, date_added: e.target.value})}
-                  required
-                />
+                <input type="date" value={formData.date_added} onChange={(e) => setFormData({...formData, date_added: e.target.value})} required />
               </div>
-
               <div className="form-group">
-                <label>Statut *</label>
-                <select 
-                  value={formData.status} 
-                  onChange={(e) => setFormData({...formData, status: e.target.value})}
-                  required
-                >
-                  <option value="Pending">En attente</option>
-                  <option value="Live">Actif</option>
-                  <option value="Lost">Perdu</option>
-                  <option value="Live">Live</option>
-                  <option value="Lost">Lost</option>
+                <label>Status *</label>
+                <select value={formData.status} onChange={(e) => setFormData({...formData, status: e.target.value})} required>
+                  <option value="Pending">Pending</option>
                   <option value="Live">Live</option>
                   <option value="Lost">Lost</option>
                 </select>
               </div>
-
               <div className="form-group">
                 <label>Cost ($) *</label>
-                <input 
-                  type="number" 
-                  step="0.01"
-                  placeholder="150.00"
-                  value={formData.cost} 
-                  onChange={(e) => setFormData({...formData, cost: e.target.value})}
-                  required
-                />
+                <input type="number" step="0.01" value={formData.cost} onChange={(e) => setFormData({...formData, cost: e.target.value})} required />
               </div>
             </div>
-
             <div className="form-actions">
-              <button type="submit" className="btn btn-success">
-                {editingBacklink ? "Edit" : "Add"}
-              </button>
-              <button type="button" className="btn btn-secondary" onClick={resetForm}>
-                Cancel
-              </button>
+              <button type="submit" className="btn btn-success">{editingBacklink ? "Update" : "Add"}</button>
+              <button type="button" className="btn btn-secondary" onClick={resetForm}>Cancel</button>
             </div>
           </form>
         </div>
       )}
 
       <div className="backlinks-table">
-        <h2>Backlinks List ({backlinks.length})</h2>
         <div className="table-responsive">
           <table>
             <thead>
               <tr>
                 <th>Client</th>
-                <th>Site Source</th>
+                <th>Source Site</th>
                 <th>Traffic</th>
                 <th>Quality</th>
                 <th>Type</th>
-                <th>Anchor Text</th>
                 <th>Status</th>
                 <th>Date</th>
-                <th>Coût</th>
+                <th>Cost</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -453,49 +289,14 @@ export default function StaffBacklinks() {
               {backlinks.map(backlink => (
                 <tr key={backlink.id}>
                   <td>{getClientName(backlink.client_id)}</td>
-                  <td>
-                    <a href={backlink.source_site?.domain || backlink.source_site} target="_blank" rel="noopener noreferrer">
-                      {backlink.source_site?.domain || backlink.source_site}
-                    </a>
-                  </td>
-                  <td>
-                    {(() => {
-                      const source = sources.find(s => s.id === backlink.source_site_id);
-                      return source?.traffic_estimated || backlink.source_site?.traffic_estimated || backlink.traffic || 'N/A';
-                    })()}
-                  </td>
-                  <td>
-                    <span className={`quality-score score-${(() => {
-                      const source = sources.find(s => s.id === backlink.source_site_id);
-                      return source?.quality_score || 1;
-                    })()}`}>
-                      {(() => {
-                        const source = sources.find(s => s.id === backlink.source_site_id);
-                        const score = source?.quality_score || 1;
-                        return '⭐'.repeat(score) + '☆'.repeat(5 - score);
-                      })()}
-                    </span>
-                  </td>
+                  <td>{backlink.source_site?.domain || backlink.source_site}</td>
+                  <td>{backlink.source_site?.traffic_estimated || backlink.traffic_estimated || 'N/A'}</td>
+                  <td>{'⭐'.repeat(backlink.quality_score || 3)}</td>
                   <td>{backlink.type}</td>
-                  <td>{backlink.anchor_text}</td>
-                  <td>
-                    <span className={`status status-${backlink.status.toLowerCase()}`}>
-                      {backlink.status}
-                    </span>
-                  </td>
-                  <td>{new Date(backlink.date_added || backlink.created_at || backlink.date).toLocaleDateString('fr-FR')}</td>
+                  <td>{backlink.status}</td>
+                  <td>{new Date(backlink.date_added || backlink.date).toLocaleDateString()}</td>
                   <td>{backlink.cost}€</td>
-                  <td>
-                    <div className="action-buttons">
-                      <button 
-                        className="btn btn-sm btn-edit" 
-                        onClick={() => handleEdit(backlink)}
-                      >
-                        Edit
-                      </button>
-                      {/* Le staff ne peut pas supprimer selon le cahier des charges */}
-                    </div>
-                  </td>
+                  <td><button className="btn btn-sm btn-edit" onClick={() => handleEdit(backlink)}>Edit</button></td>
                 </tr>
               ))}
             </tbody>

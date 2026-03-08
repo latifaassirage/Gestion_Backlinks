@@ -76,7 +76,7 @@ export default function Backlinks() {
       const submitData = {
         ...formData,
         quality_score: source?.quality_score || 3,
-        traffic: parseInt(source?.traffic || source?.traffic_estimated || 0) // Fixed: Ensure integer and not null
+        traffic_estimated: parseInt(source?.traffic_estimated || source?.traffic || 0) // Fixed: Ensure integer and not null
       };
       
       const res = await api.post("/backlinks", submitData);
@@ -100,7 +100,7 @@ export default function Backlinks() {
       const submitData = {
         ...formData,
         quality_score: source?.quality_score || 3,
-        traffic: parseInt(source?.traffic || source?.traffic_estimated || 0) // Fixed: Ensure integer and not null
+        traffic_estimated: parseInt(source?.traffic_estimated || source?.traffic || 0) // Fixed: Ensure integer and not null
       };
       
       const res = await api.put(`/backlinks/${editingBacklink.id}`, submitData);

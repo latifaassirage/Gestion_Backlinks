@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import api from "../../api/api";
 import Navbar from "../../components/Navbar";
 import jsPDF from 'jspdf';
@@ -56,7 +56,7 @@ export default function Reports() {
     }
   };
 
-  const generateReport = () => {
+  const generateReport = useCallback(() => {
     // Auto-set dates for All Clients if not specified
     if (!filters.client_id && (!filters.start_date || !filters.end_date)) {
       const allDates = backlinks
@@ -77,7 +77,8 @@ export default function Reports() {
 
     // Auto-set latest date for Specific Client if not specified
     if (filters.client_id && !filters.last_update_date) {
-      const clientBacklinks = backlinks.filter(b => b.client_id === filters.client_id);
+      const clientId = parseInt(filters.client_id);
+      const clientBacklinks = backlinks.filter(b => b.client_id === clientId);
       if (clientBacklinks.length > 0) {
         const dates = clientBacklinks
           .map(b => new Date(b.date_added || b.created_at || b.updated_at || b.date))
@@ -97,28 +98,29 @@ export default function Reports() {
 
     let filteredBacklinks = backlinks;
 
-    // Filter by client
+    // Filter by client - ensure integer comparison
     if (filters.client_id) {
-      filteredBacklinks = filteredBacklinks.filter(b => b.client_id === filters.client_id);
+      const clientId = parseInt(filters.client_id);
+      filteredBacklinks = filteredBacklinks.filter(b => b.client_id === clientId);
     }
 
-    // Filter by date ranges
+    // Filter by date ranges - use consistent date field
     if (filters.start_date) {
       filteredBacklinks = filteredBacklinks.filter(b => 
-        new Date(b.date_added) >= new Date(filters.start_date)
+        new Date(b.date_added || b.created_at || b.date) >= new Date(filters.start_date)
       );
     }
 
     if (filters.end_date) {
       filteredBacklinks = filteredBacklinks.filter(b => 
-        new Date(b.date_added) <= new Date(filters.end_date)
+        new Date(b.date_added || b.created_at || b.date) <= new Date(filters.end_date)
       );
     }
 
-    // Filter by last update date (for specific client)
+    // Filter by last update date (for specific client) - use consistent date field
     if (filters.client_id && filters.last_update_date) {
       filteredBacklinks = filteredBacklinks.filter(b => {
-        const updateDate = new Date(b.updated_at || b.created_at || b.date_added);
+        const updateDate = new Date(b.date_added || b.created_at || b.updated_at || b.date);
         return updateDate <= new Date(filters.last_update_date);
       });
     }
@@ -155,33 +157,35 @@ export default function Reports() {
         free
       }
     });
-  };
+  }, [backlinks, filters, sources]);
 
   const exportPDF = async () => {
     if (!reportData) {
-      alert("Veuillez d'abord générer un rapport");
+      console.log("❌ No report data available");
       return;
     }
+    
+    console.log("🔍 Starting PDF export with data:", {
+      backlinksCount: reportData.backlinks?.length || 0,
+      sourcesCount: sources?.length || 0,
+      hasReportData: !!reportData,
+      hasBacklinks: !!reportData.backlinks,
+      hasSources: !!sources
+    });
     
     setExporting(prev => ({ ...prev, pdf: true }));
     
     try {
-      console.log("🔍 Début génération PDF...");
-      console.log("📊 Données du rapport:", reportData);
-      
-      // Créer un nouveau document PDF
+      // Create PDF with simple constructor
       const doc = new jsPDF();
-      console.log("✅ Document PDF créé");
+      console.log("✅ PDF document created");
       
-      // Configuration des polices
-      doc.setFontSize(20);
+      // Title and info
+      doc.setFontSize(16);
       doc.setFont("helvetica", "bold");
-      
-      // Titre du rapport
       doc.text("RAPPORT DE BACKLINKS", 105, 20, { align: "center" });
       
-      // Informations du rapport
-      doc.setFontSize(12);
+      doc.setFontSize(10);
       doc.setFont("helvetica", "normal");
       
       const client = clients.find(c => c.id === filters.client_id);
@@ -190,179 +194,101 @@ export default function Reports() {
         ? `Du ${new Date(filters.start_date).toLocaleDateString('fr-FR')} au ${new Date(filters.end_date).toLocaleDateString('fr-FR')}`
         : 'Toute la période';
       
-      doc.text(`Client: ${clientName}`, 20, 40);
-      doc.text(`Période: ${period}`, 20, 50);
-      doc.text(`Date du rapport: ${new Date().toLocaleDateString('fr-FR')}`, 20, 60);
+      doc.text(`Client: ${clientName}`, 20, 30);
+      doc.text(`Période: ${period}`, 20, 38);
+      doc.text(`Date: ${new Date().toLocaleDateString('fr-FR')}`, 20, 46);
       
-      // Résumé statistique
-      doc.setFont("helvetica", "bold");
-      doc.text("RÉSUMÉ STATISTIQUE", 20, 75);
-      doc.setFont("helvetica", "normal");
+      console.log("📝 Title and info added");
       
-      // Ajouter les statistiques manuellement avec bordures
-      let yPos = 85;
-      const stats = [
-        ['Total Backlinks', reportData.summary.total.toString()],
-        ['Live', reportData.summary.live.toString()],
-        ['Pending', reportData.summary.pending.toString()],
-        ['Lost', reportData.summary.lost.toString()],
-        ['Payants', reportData.summary.paid.toString()],
-        ['Gratuits', reportData.summary.free.toString()],
-        ['Coût Total', `${reportData.summary.totalCost.toFixed(2)} €`]
-      ];
-      
-      // Dessiner le tableau du résumé
-      const tableStartY = yPos;
-      const rowHeight = 8;
-      const col1X = 20;
-      const col2X = 100;
-      const tableWidth = 160;
-      
-      stats.forEach(([label, value], index) => {
-        const currentY = tableStartY + (index * rowHeight);
-        
-        // Dessiner les bordures de la ligne
-        doc.rect(col1X, currentY - 4, tableWidth, rowHeight);
-        // Dessiner la bordure verticale entre les colonnes
-        doc.line(col2X, currentY - 4, col2X, currentY + 4);
-        
-        // Ajouter le texte
-        doc.text(label, col1X + 2, currentY);
-        doc.text(value, col2X + 2, currentY);
-      });
-      
-      yPos = tableStartY + (stats.length * rowHeight) + 10;
-      
-      // Titre du tableau détaillé
-      doc.setFont("helvetica", "bold");
-      doc.text("DÉTAIL DES BACKLINKS", 20, yPos);
-      yPos += 10;
-      
-      // En-têtes du tableau avec fond coloré
+      // Table headers
       doc.setFont("helvetica", "bold");
       doc.setFontSize(8);
-      const headers = ['Date', 'Client', 'Source', 'Type', 'Status', 'Coût'];
-      const colPositions = [20, 40, 70, 110, 140, 160, 180];
+      const headers = ['Date', 'Source', 'Traffic', 'Type', 'Anchor', 'Target URL', 'Status', 'Cost'];
+      const colPositions = [20, 35, 65, 85, 110, 140, 170, 190];
       const headerHeight = 10;
       
-      // Dessiner le fond de l'en-tête
-      doc.setFillColor(44, 62, 80); // Bleu foncé
-      doc.rect(colPositions[0], yPos - 6, 160, headerHeight, 'F');
+      let yPos = 55;
       
-      // Dessiner les bordures de l'en-tête
-      doc.rect(colPositions[0], yPos - 6, 160, headerHeight);
+      // Draw header background
+      doc.setFillColor(44, 62, 80);
+      doc.rect(colPositions[0], yPos - 6, 170, headerHeight, 'F');
       
-      // Ajouter le texte de l'en-tête en blanc
+      // Draw headers
       doc.setTextColor(255, 255, 255);
       headers.forEach((header, index) => {
         doc.text(header, colPositions[index] + 2, yPos);
       });
       
-      // Remettre le texte en noir
+      // Reset text color
       doc.setTextColor(0, 0, 0);
       doc.setFont("helvetica", "normal");
-      
       yPos += headerHeight + 2;
       
-      // Données du tableau
-      const maxRows = Math.min(reportData.backlinks.length, 25); // Augmenté à 25 lignes
-      
-      // Helper function to draw headers
-      const drawHeaders = (currentYPos) => {
-        doc.setFillColor(44, 62, 80);
-        doc.rect(colPositions[0], currentYPos - 6, 160, headerHeight, 'F');
-        doc.rect(colPositions[0], currentYPos - 6, 160, headerHeight);
-        doc.setTextColor(255, 255, 255);
-        doc.setFont("helvetica", "bold");
-        headers.forEach((header, index) => {
-          doc.text(header, colPositions[index] + 2, currentYPos);
-        });
-        doc.setTextColor(0, 0, 0);
-        doc.setFont("helvetica", "normal");
-      };
-      
-      for (let i = 0; i < maxRows; i++) {
-        const backlink = reportData.backlinks[i];
-        const clientName = clients.find(c => c.id === backlink.client_id)?.company_name || 'Inconnu';
-        const sourceDomain = sources.find(s => s.id === backlink.source_site_id)?.domain || 'Inconnu';
-        
-        // Vérifier si on doit changer de page
+      // Draw table data
+      reportData.backlinks.forEach((backlink, index) => {
+        // Check page break
         if (yPos > 270) {
           doc.addPage();
           yPos = 20;
           
-          // Répéter les en-têtes sur la nouvelle page
-          drawHeaders(yPos);
+          // Redraw headers on new page
+          doc.setFillColor(44, 62, 80);
+          doc.rect(colPositions[0], yPos - 6, 170, headerHeight, 'F');
+          doc.setTextColor(255, 255, 255);
+          doc.setFont("helvetica", "bold");
+          headers.forEach((header, index) => {
+            doc.text(header, colPositions[index] + 2, yPos);
+          });
+          doc.setTextColor(0, 0, 0);
+          doc.setFont("helvetica", "normal");
           yPos += headerHeight + 2;
         }
         
-        // Dessiner les bordures de la ligne
-        doc.rect(colPositions[0], yPos - 4, 160, 7);
+        // Draw row border
+        doc.rect(colPositions[0], yPos - 4, 170, 7);
         
-        // Dessiner les bordures verticales
+        // Draw vertical lines
         for (let j = 1; j < colPositions.length; j++) {
           doc.line(colPositions[j], yPos - 4, colPositions[j], yPos + 3);
         }
         
-        // Couleur de fond selon le statut
-        if (backlink.status === 'Live') {
-          doc.setFillColor(212, 237, 218); // Vert clair
-          doc.rect(colPositions[4], yPos - 4, 20, 7, 'F');
-        } else if (backlink.status === 'Lost') {
-          doc.setFillColor(248, 215, 218); // Rouge clair
-          doc.rect(colPositions[4], yPos - 4, 20, 7, 'F');
-        } else if (backlink.status === 'Pending') {
-          doc.setFillColor(255, 243, 205); // Jaune clair
-          doc.rect(colPositions[4], yPos - 4, 20, 7, 'F');
+        // Add row data with better error handling
+        try {
+          const source = sources.find(s => s.id === backlink.source_site_id);
+          const sourceDomain = source ? source.domain : 'Inconnu';
+          const traffic = backlink.source_site?.traffic_estimated || backlink.traffic_estimated || 'N/A';
+          
+          doc.text(new Date(backlink.date_added).toLocaleDateString('fr-FR'), colPositions[0] + 2, yPos);
+          doc.text(sourceDomain.substring(0, 12), colPositions[1] + 2, yPos);
+          doc.text(traffic.toString(), colPositions[2] + 2, yPos);
+          doc.text(backlink.type || '', colPositions[3] + 2, yPos);
+          doc.text((backlink.anchor_text || '').substring(0, 12), colPositions[4] + 2, yPos);
+          doc.text((backlink.target_url || '').substring(0, 12), colPositions[5] + 2, yPos);
+          doc.text(backlink.status || '', colPositions[6] + 2, yPos);
+          doc.text(`${backlink.cost || 0} €`, colPositions[7] + 2, yPos);
+        } catch (rowError) {
+          console.error("Error processing row:", rowError, backlink);
+          // Add minimal data if there's an error
+          doc.text('Error', colPositions[0] + 2, yPos);
+          doc.text('Error', colPositions[1] + 2, yPos);
+          doc.text('Error', colPositions[2] + 2, yPos);
+          doc.text('Error', colPositions[3] + 2, yPos);
+          doc.text('Error', colPositions[4] + 2, yPos);
+          doc.text('Error', colPositions[5] + 2, yPos);
+          doc.text('Error', colPositions[6] + 2, yPos);
+          doc.text('Error', colPositions[7] + 2, yPos);
         }
         
-        // Ajouter les données de la ligne
-        doc.text(new Date(backlink.date_added).toLocaleDateString('fr-FR'), colPositions[0] + 2, yPos);
-        doc.text(clientName.substring(0, 12), colPositions[1] + 2, yPos); // Limiter la longueur
-        doc.text(sourceDomain.substring(0, 15), colPositions[2] + 2, yPos); // Limiter la longueur
-        doc.text(backlink.type, colPositions[3] + 2, yPos);
-        doc.text(backlink.status, colPositions[4] + 2, yPos);
-        doc.text(`${backlink.cost || 0} €`, colPositions[5] + 2, yPos);
-        
         yPos += 7;
-      }
+      });
       
-      // Si plus de 25 backlinks, ajouter une note
-      if (reportData.backlinks.length > 25) {
-        yPos += 10;
-        doc.setFont("helvetica", "italic");
-        doc.text(`... et ${reportData.backlinks.length - 25} autres backlinks`, 20, yPos);
-      }
-      
-      // Pied de page
-      const pageHeight = doc.internal.pageSize.height;
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(10);
-      doc.text("Généré par Backlinks Management System", 105, pageHeight - 10, { align: "center" });
-      doc.text(`Page ${doc.internal.getNumberOfPages()}`, 105, pageHeight - 5, { align: "center" });
-      
-      // Télécharger le PDF
-      const fileName = `rapport-backlinks-${clientName.replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.pdf`;
+      // Download PDF
+      const fileName = `backlinks_report_${clientName.replace(/\s+/g, '-')}_${new Date().toISOString().split('T')[0]}.pdf`;
       doc.save(fileName);
       
-      console.log("✅ PDF sauvegardé:", fileName);
-      
-      // Message de confirmation
-      alert(`Rapport PDF généré avec succès: ${fileName}\n\n✅ Mise en forme professionnelle avec bordures et couleurs de statut.`);
     } catch (error) {
-      console.error('❌ Erreur détaillée lors de la génération PDF:', error);
-      console.error('❌ Stack trace:', error.stack);
-      console.error('❌ Message:', error.message);
-      
-      // Message d'erreur plus détaillé
-      let errorMessage = 'Erreur lors de la génération du PDF.\n\n';
-      errorMessage += `Détails: ${error.message}\n`;
-      if (error.stack) {
-        errorMessage += `Type: ${error.name}\n`;
-      }
-      errorMessage += '\nVeuillez réessayer ou contacter le support.';
-      
-      alert(errorMessage);
+      console.error("Error exporting PDF:", error);
+      alert("Erreur lors de la génération du PDF. Veuillez réessayer.");
     } finally {
       setExporting(prev => ({ ...prev, pdf: false }));
     }
@@ -399,19 +325,20 @@ export default function Reports() {
         ['Coût Total', `${reportData.summary.totalCost.toFixed(2)} €`],
         [''],
         ['DÉTAIL DES BACKLINKS'],
-        ['Date', 'Client', 'Site Source', 'Type', 'Status', 'Coût']
+        ['Date', 'Source Site', 'Traffic', 'Type', 'Anchor', 'Target URL', 'Status', 'Cost']
       ];
       
-      // Ajouter les données de chaque backlink
+      // Ajouter les données de chaque backlink - Match table columns
       reportData.backlinks.forEach(backlink => {
-        const clientName = clients.find(c => c.id === backlink.client_id)?.company_name || 'Inconnu';
         const sourceDomain = sources.find(s => s.id === backlink.source_site_id)?.domain || 'Inconnu';
         
         tableData.push([
           new Date(backlink.date_added).toLocaleDateString('fr-FR'),
-          clientName,
           sourceDomain,
+          backlink.source_site?.traffic_estimated || backlink.traffic_estimated || 'N/A',
           backlink.type || '',
+          backlink.anchor_text || '',
+          backlink.target_url || '',
           backlink.status || '',
           `${backlink.cost || 0} €`
         ]);
@@ -498,14 +425,16 @@ export default function Reports() {
         }
       }
       
-      // Largeurs des colonnes optimisées
+      // Largeurs des colonnes optimisées - Match table columns
       ws['!cols'] = [
         { wch: 12 },  // Date
-        { wch: 25 },  // Client
-        { wch: 30 },  // Site Source
+        { wch: 20 },  // Source Site
+        { wch: 12 },  // Traffic
         { wch: 15 },  // Type
+        { wch: 20 },  // Anchor
+        { wch: 25 },  // Target URL
         { wch: 12 },  // Status
-        { wch: 12 }   // Coût
+        { wch: 10 }   // Cost
       ];
       
       // Ajouter la feuille au workbook
@@ -514,9 +443,6 @@ export default function Reports() {
       // Générer le fichier Excel
       const fileName = `rapport-backlinks-${clientName.replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.xlsx`;
       XLSX.writeFile(wb, fileName);
-      
-      // Message de confirmation
-      alert(`Rapport Excel généré avec succès: ${fileName}\n\n✅ Tableau simple et professionnel avec:\n• Structure claire et lisible\n• Bordures visibles\n• En-têtes colorés\n• Colonnes bien ajustées`);
     } catch (error) {
       console.error('Erreur lors de la génération Excel:', error);
       alert('Erreur lors de la génération du fichier Excel. Veuillez réessayer.');
@@ -546,7 +472,7 @@ export default function Reports() {
     if (sources.length > 0 && backlinks.length > 0) {
       generateReport();
     }
-  }, [sources, backlinks]);
+  }, [sources, backlinks, generateReport]);
 
   // Auto-date functionality: Set dates when specific client is selected
   useEffect(() => {
@@ -554,7 +480,8 @@ export default function Reports() {
       console.log(`Auto-filling date for client ID: ${filters.client_id}`);
       
       // When specific client selected, set Last Update Date to latest date from that client's backlinks
-      const clientBacklinks = backlinks.filter(b => b.client_id === filters.client_id);
+      const clientId = parseInt(filters.client_id);
+      const clientBacklinks = backlinks.filter(b => b.client_id === clientId);
       console.log(`Found ${clientBacklinks.length} backlinks for this client`);
       
       if (clientBacklinks.length > 0) {
@@ -595,7 +522,7 @@ export default function Reports() {
         end_date: prev.end_date
       }));
     }
-  }, [filters.client_id, backlinks]);
+  }, [filters.client_id, backlinks, generateReport]);
 
   if (loading) {
     return <div className="loading">Loading reports...</div>;
@@ -745,7 +672,7 @@ export default function Reports() {
                           {getSourceDomain(backlink.source_site_id)}
                         </a>
                       </td>
-                      <td className="traffic">{backlink.dynamic_quality_score ? sources.find(s => s.id === backlink.source_site_id)?.traffic || 'N/A' : backlink.traffic || 'N/A'}</td>
+                      <td className="traffic">{backlink.source_site?.traffic_estimated || backlink.traffic_estimated || 'N/A'}</td>
                       <td className="type">{backlink.type}</td>
                       <td className="target-url">
                         <a href={backlink.target_url} target="_blank" rel="noopener noreferrer">
