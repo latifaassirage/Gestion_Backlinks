@@ -314,7 +314,7 @@ export default function StaffBacklinks() {
                   <td>{getClientName(backlink.client_id)}</td>
                   <td>{backlink.source_site?.domain || backlink.source_site}</td>
                   <td>{(backlink.source_site?.traffic_estimated || backlink.traffic_estimated || 0).toLocaleString()}</td>
-                  <td>{'⭐'.repeat(backlink.quality_score || 3)}</td>
+                  <td>{'⭐'.repeat(backlink.source_site?.quality_score || backlink.quality_score || 3)}</td>
                   <td>{backlink.type}</td>
                   <td>{backlink.status}</td>
                   <td>{new Date(backlink.date_added || backlink.date).toLocaleDateString()}</td>
