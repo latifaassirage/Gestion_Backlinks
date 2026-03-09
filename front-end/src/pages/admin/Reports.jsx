@@ -69,6 +69,30 @@ export default function Reports() {
       filters: filters
     });
     
+    // Auto-set dates for All Clients if not specified
+    if (!filters.client_id && (!filters.start_date || !filters.end_date)) {
+      console.log("📅 Auto-setting dates for All Clients mode");
+      
+      const allDates = backlinks
+        .map(b => new Date(b.date_added || b.created_at || b.date))
+        .filter(date => !isNaN(date.getTime()))
+        .sort((a, b) => a - b); // Sort ascending (earliest first)
+      
+      if (allDates.length > 0) {
+        const earliestDate = allDates[0].toISOString().split('T')[0];
+        const latestDate = allDates[allDates.length - 1].toISOString().split('T')[0];
+        
+        console.log(`📅 Setting date range: ${earliestDate} to ${latestDate}`);
+        
+        setFilters(prev => ({
+          ...prev,
+          start_date: earliestDate,
+          end_date: latestDate
+        }));
+        return; // Exit and let useEffect trigger regeneration
+      }
+    }
+    
     let filteredBacklinks = backlinks;
 
     // Filter by client - ensure integer comparison

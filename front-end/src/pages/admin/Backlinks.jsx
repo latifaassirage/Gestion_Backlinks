@@ -20,7 +20,8 @@ export default function Backlinks() {
     date_added: new Date().toISOString().split('T')[0],
     status: "Pending",
     cost: "",
-    quality_score: 3
+    quality_score: 3,
+    traffic_estimated: 0
   });
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -66,8 +67,11 @@ export default function Backlinks() {
   const addBacklink = async (e) => {
     e.preventDefault();
     if (checkDuplicate(formData.client_id, formData.source_site_id)) {
-      alert("⚠️ Warning: This client already has a backlink on this source website.");
-      return;
+      const sourceSite = sources.find(s => s.id === formData.source_site_id);
+      const confirmDuplicate = window.confirm(
+        `⚠️ This client already has a backlink on "${sourceSite?.domain || 'Unknown site'}".\n\nDo you want to continue adding another backlink on the same source?`
+      );
+      if (!confirmDuplicate) return;
     }
 
     try {
@@ -145,7 +149,8 @@ export default function Backlinks() {
       date_added: new Date().toISOString().split('T')[0],
       status: "Pending",
       cost: "",
-      quality_score: 3
+      quality_score: 3,
+      traffic_estimated: 0
     });
   };
 
@@ -162,14 +167,16 @@ export default function Backlinks() {
     fetchBacklinks(); fetchClients(); fetchSources(); 
   }, []);
 
-  // Auto-fill quality_score when source site is selected
+  // Auto-fill quality_score and traffic_estimated when source site is selected
   useEffect(() => {
     if (formData.source_site_id && sources.length > 0) {
       const selectedSource = sources.find(source => source.id === parseInt(formData.source_site_id));
-      if (selectedSource && selectedSource.quality_score) {
+      if (selectedSource) {
+        console.log("🔄 Auto-fetching source data:", selectedSource);
         setFormData(prev => ({
           ...prev,
-          quality_score: selectedSource.quality_score
+          quality_score: selectedSource.quality_score || 3,
+          traffic_estimated: selectedSource.traffic_estimated || 0
         }));
       }
     }
@@ -222,6 +229,16 @@ export default function Backlinks() {
                 <input value={formData.anchor_text} onChange={e=>setFormData({...formData, anchor_text: e.target.value})} placeholder="Anchor Text" />
               </div>
               <div className="form-row">
+                <select value={formData.type} onChange={e=>setFormData({...formData, type: e.target.value})}>
+                  <option value="Guest Post">Guest Post</option>
+                  <option value="Directory">Directory</option>
+                  <option value="Profile">Profile</option>
+                  <option value="Comment">Comment</option>
+                  <option value="Other">Other</option>
+                </select>
+                <input value={formData.placement_url} onChange={e=>setFormData({...formData, placement_url: e.target.value})} placeholder="Placement URL (exact URL where backlink is located)" />
+              </div>
+              <div className="form-row">
                 <input type="date" value={formData.date_added} onChange={e=>setFormData({...formData, date_added: e.target.value})} />
                 <select value={formData.status} onChange={e=>setFormData({...formData, status: e.target.value})}>
                   <option value="Live">Live</option>
@@ -230,7 +247,7 @@ export default function Backlinks() {
                 </select>
               </div>
               <div className="form-row">
-                <input type="number" value={formData.cost} onChange={e=>setFormData({...formData, cost: e.target.value})} placeholder="Cost" />
+                <input type="number" value={formData.cost} onChange={e=>setFormData({...formData, cost: e.target.value})} placeholder="Cost (0 = Free)" />
                 <div className="quality-score-container">
                   <label className="quality-label">Quality Score: {formData.quality_score} ⭐</label>
                   <div className="quality-progress-bar">
@@ -250,6 +267,17 @@ export default function Backlinks() {
                   >
                     {[1,2,3,4,5].map(n => <option key={n} value={n}>{n} ⭐</option>)}
                   </select>
+                </div>
+              </div>
+              
+              <div className="form-row">
+                <div className="traffic-container">
+                  <label className="traffic-label">Traffic: {(formData.traffic_estimated || 0).toLocaleString()} visitors/month 📊</label>
+                  <div className="traffic-display">
+                    <span className="traffic-value">{(formData.traffic_estimated || 0).toLocaleString()}</span>
+                    <span className="traffic-unit">visitors/month</span>
+                  </div>
+                  <small className="traffic-note">Auto-fetched from source website data</small>
                 </div>
               </div>
               <div className="form-actions">

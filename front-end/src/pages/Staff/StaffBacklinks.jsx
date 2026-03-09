@@ -28,17 +28,20 @@ export default function StaffBacklinks() {
     fetchData();
   }, []);
 
+  // Auto-fill quality_score and traffic_estimated when source site is selected (only for new backlinks)
   useEffect(() => {
-    if (formData.source_site_id && sources.length > 0) {
+    if (!editingBacklink && formData.source_site_id && sources.length > 0) {
       const selectedSource = sources.find(source => source.id === parseInt(formData.source_site_id));
-      if (selectedSource && selectedSource.quality_score) {
+      if (selectedSource) {
+        console.log("🔄 Auto-fetching source data for new backlink:", selectedSource);
         setFormData(prev => ({
           ...prev,
-          quality_score: selectedSource.quality_score
+          quality_score: selectedSource.quality_score || 3,
+          traffic_estimated: selectedSource.traffic_estimated || 0
         }));
       }
     }
-  }, [formData.source_site_id, sources]);
+  }, [formData.source_site_id, sources, editingBacklink]);
 
   useEffect(() => {
     if (formData.source_site_id && formData.quality_score) {
@@ -120,12 +123,26 @@ export default function StaffBacklinks() {
     }
 
     try {
-      const source = sources.find(s => s.id === formData.source_site_id);
-      const submitData = {
-        ...formData,
-        quality_score: source?.quality_score || 3,
-        traffic_estimated: parseInt(source?.traffic_estimated || source?.traffic || 0)
-      };
+      let submitData;
+      
+      if (editingBacklink) {
+        // When editing, preserve the current quality_score and traffic_estimated from formData
+        submitData = {
+          ...formData,
+          quality_score: formData.quality_score,
+          traffic_estimated: parseInt(formData.traffic_estimated || 0)
+        };
+        console.log("📝 Editing backlink with data:", submitData);
+      } else {
+        // When adding new backlink, fetch from source
+        const source = sources.find(s => s.id === formData.source_site_id);
+        submitData = {
+          ...formData,
+          quality_score: source?.quality_score || 3,
+          traffic_estimated: parseInt(source?.traffic_estimated || source?.traffic || 0)
+        };
+        console.log("➕ Adding new backlink with data:", submitData);
+      }
       
       if (editingBacklink) {
         await api.put(`/backlinks/${editingBacklink.id}`, submitData);
@@ -290,7 +307,7 @@ export default function StaffBacklinks() {
                 <tr key={backlink.id}>
                   <td>{getClientName(backlink.client_id)}</td>
                   <td>{backlink.source_site?.domain || backlink.source_site}</td>
-                  <td>{backlink.source_site?.traffic_estimated || backlink.traffic_estimated || 'N/A'}</td>
+                  <td>{(backlink.source_site?.traffic_estimated || backlink.traffic_estimated || 0).toLocaleString()}</td>
                   <td>{'⭐'.repeat(backlink.quality_score || 3)}</td>
                   <td>{backlink.type}</td>
                   <td>{backlink.status}</td>
