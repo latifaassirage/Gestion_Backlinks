@@ -14,6 +14,12 @@ return new class extends Migration
             $table->date('period_start')->nullable();
             $table->date('period_end')->nullable();
             $table->string('report_type')->nullable();
+            $table->string('title')->nullable();
+            $table->text('description')->nullable();
+            $table->json('data')->nullable();
+            $table->string('file_path')->nullable();
+            $table->foreignId('generated_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->timestamp('generated_at')->nullable();
             $table->timestamps();
         });
     }
