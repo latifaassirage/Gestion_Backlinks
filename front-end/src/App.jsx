@@ -12,7 +12,7 @@ import StaffBacklinks from "./pages/Staff/StaffBacklinks";
 import StaffProfile from "./pages/Staff/StaffProfile";
 import PrivateRoute from "./components/PrivateRoute";
 
-// Add future flags to suppress warnings
+
 const routerOptions = {
   future: {
     v7_startTransition: true,

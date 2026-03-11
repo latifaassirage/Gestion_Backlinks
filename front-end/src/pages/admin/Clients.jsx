@@ -3,7 +3,7 @@ import api from "../../api/api";
 import Navbar from "../../components/Navbar";
 import "./Clients.css";
 
-// مودال Add / Edit Client
+
 function ClientModal({ onClose, onSave, initialData }) {
   const [companyName, setCompanyName] = useState(initialData?.company_name || "");
   const [website, setWebsite] = useState(initialData?.website || "");
@@ -42,7 +42,7 @@ export default function Clients() {
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [editClient, setEditClient] = useState(null); // client اللي بغينا نعدل
+  const [editClient, setEditClient] = useState(null); 
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const isAdmin = user.role === 'admin';

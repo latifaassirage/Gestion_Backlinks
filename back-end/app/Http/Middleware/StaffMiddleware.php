@@ -9,7 +9,7 @@ class StaffMiddleware
 {
     public function handle($request, $next)
     {
-        // لا شيء هنا حاليا
+      
         return $next($request);
     }
 }

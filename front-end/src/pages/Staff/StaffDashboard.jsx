@@ -4,12 +4,12 @@ import api from '../../api/api';
 import StaffNavbar from '../../components/StaffNavbar';
 import './StaffDashboard.css';
 
-// Simple Pie Chart Component
+
 const PieChart = ({ data }) => {
   const total = data.reduce((sum, item) => sum + item.value, 0);
   if (total === 0) return null;
 
-  let currentAngle = -90; // Start from top
+  let currentAngle = -90; 
   
   return (
     <div className="pie-chart-container">
@@ -103,11 +103,11 @@ const StaffDashboard = () => {
       const currentYear = new Date().getFullYear();
       
       const monthlyBacklinksList = backlinks.filter(backlink => {
-        // Prioritize Date column we added to table, then fallback to other fields
+       
         const dateFields = [
-          backlink.date_added,  // Primary field from form
+          backlink.date_added,  
           backlink.date,        // Date column we added to table
-          backlink.created_at,   // Fallback fields
+          backlink.created_at,   
           backlink.updated_at
         ].filter(Boolean);
         
@@ -116,7 +116,7 @@ const StaffDashboard = () => {
           return false;
         }
         
-        // Use the most recent date for accuracy
+       
         const backlinkDate = new Date(dateFields[0]);
         const isValidDate = !isNaN(backlinkDate.getTime());
         
@@ -148,8 +148,8 @@ const StaffDashboard = () => {
         monthlyBacklinks
       });
       
-      // Set monthly backlinks data for table - show ALL backlinks for current month
-      setMonthlyBacklinksData(monthlyBacklinksList); // Show all backlinks, no limit
+
+      setMonthlyBacklinksData(monthlyBacklinksList);
     } catch (error) {
       console.error('Error fetching stats:', error);
       if (error.response?.status === 401) {
@@ -164,12 +164,11 @@ const StaffDashboard = () => {
     fetchDashboardStats();
   }, [fetchDashboardStats]);
 
-  // Real-time refresh: Update dashboard data every 30 seconds
+  
   useEffect(() => {
     fetchDashboardStats();
     
-    // Set up periodic refresh every 30 seconds for real-time updates
-    const interval = setInterval(() => {
+        const interval = setInterval(() => {
       fetchDashboardStats();
     }, 30000);
     

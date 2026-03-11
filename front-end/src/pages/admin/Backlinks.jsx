@@ -75,12 +75,12 @@ export default function Backlinks() {
     }
 
     try {
-      // Get quality score and traffic from selected source
+    
       const source = sources.find(s => s.id === formData.source_site_id);
       const submitData = {
         ...formData,
         quality_score: source?.quality_score || 3,
-        traffic_estimated: parseInt(source?.traffic_estimated || source?.traffic || 0) // Fixed: Ensure integer and not null
+        traffic_estimated: parseInt(source?.traffic_estimated || source?.traffic || 0) 
       };
       
       const res = await api.post("/backlinks", submitData);
@@ -89,7 +89,7 @@ export default function Backlinks() {
       setShowForm(false);
       alert("Backlink added successfully!");
       
-      // Real-time sync: Refresh data to ensure consistency
+    
       fetchBacklinks();
     } catch (error) {
       alert("Error adding backlink");
@@ -99,12 +99,12 @@ export default function Backlinks() {
   const updateBacklink = async (e) => {
     e.preventDefault();
     try {
-      // Get quality score and traffic from selected source
+    
       const source = sources.find(s => s.id === formData.source_site_id);
       const submitData = {
         ...formData,
         quality_score: source?.quality_score || 3,
-        traffic_estimated: parseInt(source?.traffic_estimated || source?.traffic || 0) // Fixed: Ensure integer and not null
+        traffic_estimated: parseInt(source?.traffic_estimated || source?.traffic || 0)
       };
       
       const res = await api.put(`/backlinks/${editingBacklink.id}`, submitData);
@@ -114,7 +114,7 @@ export default function Backlinks() {
       setShowForm(false);
       alert("Backlink updated successfully!");
       
-      // Real-time sync: Refresh data to ensure consistency
+      
       fetchBacklinks();
     } catch (error) {
       alert("Error updating backlink");
@@ -167,7 +167,7 @@ export default function Backlinks() {
     fetchBacklinks(); fetchClients(); fetchSources(); 
   }, []);
 
-  // Auto-fill quality_score and traffic_estimated when source site is selected
+  
   useEffect(() => {
     if (formData.source_site_id && sources.length > 0) {
       const selectedSource = sources.find(source => source.id === parseInt(formData.source_site_id));
@@ -182,7 +182,7 @@ export default function Backlinks() {
     }
   }, [formData.source_site_id, sources]);
 
-  // Real-time sync: Update sources when quality is manually changed
+  
   useEffect(() => {
     if (formData.source_site_id && formData.quality_score) {
       const sourceIndex = sources.findIndex(s => s.id === parseInt(formData.source_site_id));

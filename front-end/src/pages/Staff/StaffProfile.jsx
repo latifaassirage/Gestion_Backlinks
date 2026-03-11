@@ -36,7 +36,7 @@ export default function StaffProfile() {
       });
     } catch (error) {
       console.error('Error fetching profile:', error);
-      // Fallback to localStorage if API fails
+    
       const userData = JSON.parse(localStorage.getItem('user') || '{}');
       setUser(userData);
       setFormData({
@@ -61,25 +61,24 @@ export default function StaffProfile() {
     setMessage("");
 
     try {
-      // Prepare update data - only send non-empty fields
-      const updateData = {};
       
-      // Only include name if it's not empty
+      const updateData = {};
+     
       if (formData.name.trim()) {
         updateData.name = formData.name;
       }
       
-      // Only include email if it's not empty
+      
       if (formData.email.trim()) {
         updateData.email = formData.email;
       }
       
-      // Only include position if it's not empty
+      
       if (formData.position.trim()) {
         updateData.position = formData.position;
       }
       
-      // Only include department if it's not empty
+      
       if (formData.department.trim()) {
         updateData.department = formData.department;
       }
@@ -87,7 +86,7 @@ export default function StaffProfile() {
       const response = await api.put('/profile', updateData);
       const updatedUser = response.data;
       
-      // Update localStorage
+     
       localStorage.setItem('user', JSON.stringify(updatedUser));
       setUser(updatedUser);
       setEditing(false);

@@ -3,7 +3,7 @@ import api from "../../api/api";
 import Navbar from "../../components/Navbar";
 import "./Sources.css";
 
-// مودال Add / Edit Source
+
 function AddSourceModal({ onClose, onSave, source }) {
   const [domain, setDomain] = useState(source?.domain || "");
   const [qualityScore, setQualityScore] = useState(source?.quality_score || 1);

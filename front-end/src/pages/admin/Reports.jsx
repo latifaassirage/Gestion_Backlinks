@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import api from "../../api/api";
 import Navbar from "../../components/Navbar";
-// خلينا هادو إيلا حتاجيتيهم من بعد، وخا دابا Backend هو لي كيتكلف
+
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
@@ -136,14 +136,12 @@ export default function Reports() {
     }
   }, [backlinks, sources, filters]); 
 
-  // ==========================================
-  // 1️⃣ إعداد تصدير PDF بطريقة صحيحة مع Blob
-  // ==========================================
+  
   const exportPDF = async () => {
     try {
       setExporting(prev => ({ ...prev, pdf: true }));
       
-      // تعريف اسم العميل الفوق باش ما يعطيناش خطأ ReferenceError
+     
       const client = filters.client_id 
         ? clients.find(c => c.id === parseInt(filters.client_id))
         : null;
@@ -184,14 +182,12 @@ export default function Reports() {
     }
   };
 
-  // ==========================================
-  // 2️⃣ إعداد تصدير Excel/CSV بطريقة صحيحة مع Blob
-  // ==========================================
+ 
   const exportExcel = async () => {
     try {
       setExporting(prev => ({ ...prev, excel: true }));
       
-      // تعريف اسم العميل
+      
       const client = filters.client_id 
         ? clients.find(c => c.id === parseInt(filters.client_id))
         : null;
@@ -207,10 +203,10 @@ export default function Reports() {
         url += `/${filters.client_id}`;
       }
       
-      // طلب الملف كـ Blob
+      
       const response = await api.post(url, params, { responseType: 'blob' });
       
-      // السيرفر كيرجع CSV، غنحملوه مباشرة
+      
       const blob = new Blob([response.data], { type: 'text/csv' });
       const downloadUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');

@@ -11,7 +11,7 @@ Permettre la gestion complète des clients et le suivi des backlinks réalisés,
 - **Backend**: Laravel 12.0 avec Sanctum (authentification)
 - **Frontend**: React 19.2.4 avec Axios 1.13.6
 - **Database**: MySQL avec migrations
-- **Librairies**: jsPDF 4.2.0, jsPDF-autotable 5.0.7, XLSX 0.18.5
+- **Librairies**: jsPDF, jsPDF-autotable , XLSX
 - **Architecture**: REST API + SPA React
 
 ### Prérequis
@@ -91,28 +91,6 @@ La commande `php artisan migrate:fresh --seed` charge automatiquement:
 - Routes staff protégées par middleware `staff` 
 - Toutes les routes API protégées par `auth:sanctum`
 
-## Structure du Projet
-
-```
-gestion-backlinks/
-├── back-end/                 # API Laravel
-│   ├── app/
-│   │   ├── Http/Controllers/
-│   │   ├── Models/
-│   │   └── Middleware/
-│   ├── database/
-│   │   ├── migrations/
-│   │   └── seeders/
-│   └── routes/
-└── front-end/                # SPA React
-    ├── src/
-    │   ├── api/            # Services API
-    │   ├── components/     # Composants UI
-    │   ├── contexts/       # React Context
-    │   └── pages/          # Pages (Admin/Staff)
-    └── public/
-```
-
 ## Fonctionnalités Implémentées
 
 ✅ **Gestion des Utilisateurs**
@@ -153,11 +131,10 @@ gestion-backlinks/
 
 ## Hors Périmètre
 
-- ❌ Accès client externe
-- ❌ API SEO tierce
-- ❌ Automatisation de scraping
-- ❌ Système de paiement
-- ❌ Notifications email automatiques
+- ❌ Accès client 
+- ❌ API SEO 
+- ❌ Automatisation 
+
 
 ## Développement
 

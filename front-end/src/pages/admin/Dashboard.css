@@ -337,7 +337,7 @@
   min-height: 400px;
 }
 
-/* Pie Chart Styles */
+
 .pie-chart-container {
   display: flex;
   flex-direction: column;
@@ -478,7 +478,7 @@
   padding: 2rem;
 }
 
-/* Responsive Design */
+
 @media (max-width: 768px) {
   .stats-grid-enhanced {
     grid-template-columns: 1fr;

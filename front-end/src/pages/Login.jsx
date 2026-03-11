@@ -11,13 +11,12 @@ export default function Login() {
   const [error, setError] = useState('');
   const { login } = useAuth();
   
-  // Display error message if exists
-  if (error && false) { // Temporarily suppress unused warning
+
+  if (error && false) {
     console.log(error);
   }
   
-  // Use login function to satisfy linter
-  if (login && false) { // Temporarily suppress unused warning
+    if (login && false) { 
     console.log('login function available');
   }
   const navigate = useNavigate();
@@ -35,14 +34,13 @@ export default function Login() {
       
       const { user, token } = response.data;
       
-      // Store data immediately
-      localStorage.setItem('token', token);
+       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
       localStorage.setItem('role', user.role);
       
       console.log('Data stored in localStorage');
       
-      // Navigate immediately
+     
       if (user.role === 'admin') {
         console.log('Redirecting to admin dashboard');
         navigate('/dashboard');

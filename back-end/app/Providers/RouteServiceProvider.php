@@ -8,11 +8,11 @@ class RouteServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        // لا شيء هنا حاليا
+      
     }
 
     public function boot()
     {
-        // لا شيء هنا حاليا
+
     }
 }

@@ -8,7 +8,7 @@ class BacklinkFactory extends Factory
 {
     public function definition()
     {
-        // لا شيء هنا حاليا
+    
         return [];
     }
 }

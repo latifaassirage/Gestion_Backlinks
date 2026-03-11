@@ -9,7 +9,7 @@ const PieChart = ({ data }) => {
   const total = data.reduce((sum, item) => sum + item.value, 0);
   if (total === 0) return null;
 
-  let currentAngle = -90; // Start from top
+  let currentAngle = -90; 
   
   return (
     <div className="pie-chart-container">
@@ -89,12 +89,12 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   
-  // 🛡️ تصحيح قراءة الـ User باش ما يبقاش يطلع Error "undefined"
+  
   const userStr = localStorage.getItem('user');
   const user = (userStr && userStr !== "undefined") ? JSON.parse(userStr) : {};
   
-  // Use user variable to satisfy linter
-  if (user && false) { // Temporarily suppress unused warning
+  
+  if (user && false) { 
     console.log('User data available');
   }
 
@@ -117,11 +117,11 @@ const Dashboard = () => {
       const currentYear = new Date().getFullYear();
       
       const monthlyBacklinksList = backlinks.filter(backlink => {
-        // Prioritize Date column we added to table, then fallback to other fields
+     
         const dateFields = [
-          backlink.date_added,  // Primary field from form
-          backlink.date,        // Date column we added to table
-          backlink.created_at,   // Fallback fields
+          backlink.date_added,  
+          backlink.date,       
+          backlink.created_at,   
           backlink.updated_at
         ].filter(Boolean);
         
@@ -130,7 +130,7 @@ const Dashboard = () => {
           return false;
         }
         
-        // Use the most recent date for accuracy
+        
         const backlinkDate = new Date(dateFields[0]);
         const isValidDate = !isNaN(backlinkDate.getTime());
         
@@ -165,7 +165,7 @@ const Dashboard = () => {
       });
       
       // Set monthly backlinks data for table - show ALL backlinks for current month
-      setMonthlyBacklinksData(monthlyBacklinksList); // Show all backlinks, no limit
+      setMonthlyBacklinksData(monthlyBacklinksList); 
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
       console.error('Error response:', error.response?.data);
@@ -186,11 +186,11 @@ const Dashboard = () => {
     }
   };
 
-  // Real-time refresh: Update dashboard data every 30 seconds
+  
   useEffect(() => {
     fetchDashboardStats();
     
-    // Set up periodic refresh every 30 seconds for real-time updates
+    
     const interval = setInterval(() => {
       fetchDashboardStats();
     }, 30000);
@@ -198,7 +198,7 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, [fetchDashboardStats]);
 
-  // ✅ حيدت ليك الـ if (!isAdmin) return null حيت هي اللي كانت كتمحي الـ Dashboard
+  
   
   if (loading) {
     return (
@@ -218,8 +218,7 @@ const Dashboard = () => {
       <div className="dashboard-content">
         <h1 className="dashboard-title">Admin Dashboard</h1>
         
-        {/* Professional Cards Section */}
-        <div className="stats-grid-enhanced">
+              <div className="stats-grid-enhanced">
           <div className="stat-card-enhanced clients-card">
             <div className="stat-icon-enhanced clients-icon">
               <svg width="60" height="60" viewBox="0 0 24 24" fill="none">

@@ -8,7 +8,7 @@ class UserFactory extends Factory
 {
     public function definition()
     {
-        // لا شيء هنا حاليا
+       
         return [];
     }
 }

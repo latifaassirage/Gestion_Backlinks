@@ -28,7 +28,7 @@ export default function StaffBacklinks() {
     fetchData();
   }, []);
 
-  // Auto-fill quality_score and traffic_estimated when source site is selected
+  
   useEffect(() => {
     if (formData.source_site_id && sources.length > 0) {
       const selectedSource = sources.find(source => source.id === parseInt(formData.source_site_id));
@@ -100,7 +100,7 @@ export default function StaffBacklinks() {
       let submitData;
       
       if (editingBacklink) {
-        // When editing, preserve the current quality_score and traffic_estimated from formData
+        
         submitData = {
           ...formData,
           quality_score: formData.quality_score,
@@ -108,7 +108,7 @@ export default function StaffBacklinks() {
         };
         console.log("📝 Editing backlink with data:", submitData);
       } else {
-        // When adding new backlink, fetch from source
+        
         const source = sources.find(s => s.id === formData.source_site_id);
         submitData = {
           ...formData,

@@ -9,12 +9,12 @@ export default function Profile() {
   const { logout } = useAuth();
   const navigate = useNavigate();
   
-  // Use logout and navigate to satisfy linter
-  if (logout && false) { // Temporarily suppress unused warning
+ 
+  if (logout && false) { 
     console.log('logout function available');
   }
   
-  if (navigate && false) { // Temporarily suppress unused warning
+  if (navigate && false) { 
     console.log('navigate function available');
   }
   const [user, setUser] = useState(null);
@@ -70,15 +70,15 @@ export default function Profile() {
     setMessage("");
 
     try {
-      // Prepare update data - only send non-empty fields
+     
       const updateData = {};
       
-      // Only include name if it's not empty
+      
       if (formData.name.trim()) {
         updateData.name = formData.name;
       }
       
-      // Only include email if it's not empty
+     
       if (formData.email.trim()) {
         updateData.email = formData.email;
       }
@@ -92,7 +92,7 @@ export default function Profile() {
       const response = await api.put('/profile', updateData);
       const updatedUser = response.data;
       
-      // Update localStorage
+      
       localStorage.setItem('user', JSON.stringify(updatedUser));
       setUser(updatedUser);
       

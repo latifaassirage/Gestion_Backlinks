@@ -6,5 +6,5 @@ use Illuminate\Support\ServiceProvider;
 
 class RouteServiceProvider extends ServiceProvider
 {
-    // لا شيء هنا حاليا
+
 }

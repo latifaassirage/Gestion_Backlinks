@@ -9,7 +9,7 @@
         .header h1 { margin: 0; color: #2c3e50; font-size: 22px; }
         .header p { margin: 5px 0; color: #7f8c8d; }
         
-        /* Stats Styling */
+        
         .stats-container { width: 100%; margin-bottom: 20px; text-align: center; }
         .stat-box { display: inline-block; width: 18%; padding: 10px; background: #fff; border: 1px solid #eee; margin: 0 5px; }
         .stat-box h4 { margin: 0; color: #7f8c8d; font-size: 9px; text-transform: uppercase; }

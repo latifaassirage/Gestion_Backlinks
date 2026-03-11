@@ -51,18 +51,17 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users,email,'.$user->id,
         ]);
 
-        // Only update name if provided
+        
         if ($request->filled('name')) {
             $user->name = $request->name;
         }
 
-        // Only update email if provided
+       
         if ($request->filled('email')) {
             $user->email = $request->email;
         }
 
-        // Handle password update if provided
-        if ($request->filled('current_password') && $request->filled('new_password')) {
+               if ($request->filled('current_password') && $request->filled('new_password')) {
             if (!Hash::check($request->current_password, $user->password)) {
                 return response()->json([
                     'message' => 'Current password is incorrect'
@@ -72,8 +71,7 @@ class AuthController extends Controller
             $user->password = Hash::make($request->new_password);
         }
 
-        // Handle additional fields for staff (only update if provided)
-        if ($user->role === 'staff') {
+               if ($user->role === 'staff') {
             if ($request->filled('position')) {
                 $user->position = $request->position;
             }
