@@ -18,4 +18,24 @@ class BacklinkTypeController extends Controller
         $type = \App\Models\BacklinkType::create(['name' => $request->name]);
         return response()->json($type);
     }
+
+    public function destroy($id)
+    {
+        $type = BacklinkType::findOrFail($id);
+        
+        // Vérifier si des backlinks utilisent ce type
+        $backlinksCount = \App\Models\Backlink::where('type', $type->name)->count();
+        
+        if ($backlinksCount > 0) {
+            return response()->json([
+                'message' => "Cannot delete '{$type->name}' because it is used by {$backlinksCount} backlink(s)."
+            ], 422);
+        }
+        
+        $type->delete();
+        
+        return response()->json([
+            'message' => 'Backlink type deleted successfully'
+        ]);
+    }
 }

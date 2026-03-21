@@ -10,6 +10,7 @@ use App\Http\Controllers\BacklinkTypeController;
 
 Route::get('/backlink-types', [BacklinkTypeController::class, 'index']);
 Route::post('/backlink-types', [BacklinkTypeController::class, 'store']);
+Route::delete('/backlink-types/{id}', [BacklinkTypeController::class, 'destroy']);
 
 // Auth
 Route::post('/login',[AuthController::class,'login']);
