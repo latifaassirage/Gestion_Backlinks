@@ -19,6 +19,7 @@ class SourceSiteController extends Controller
             'quality_score'=>'required|integer|min:1|max:5',
             'dr'=>'nullable|integer',
             'traffic_estimated'=>'nullable|integer',
+            'spam_score'=>'required|integer|min:0|max:100',
             'notes'=>'nullable|string',
         ]);
 
@@ -39,6 +40,7 @@ class SourceSiteController extends Controller
             'quality_score'=>'sometimes|required|integer|min:1|max:5',
             'dr'=>'nullable|integer',
             'traffic_estimated'=>'nullable|integer',
+            'spam_score'=>'sometimes|required|integer|min:0|max:100',
             'notes'=>'nullable|string',
         ]);
         $source->update($data);

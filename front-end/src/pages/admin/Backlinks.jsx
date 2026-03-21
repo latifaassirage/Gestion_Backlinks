@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import api from "../../api/api";
 import Navbar from "../../components/Navbar";
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import "./Backlinks.css";
 
 export default function Backlinks() {
@@ -10,6 +12,7 @@ export default function Backlinks() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingBacklink, setEditingBacklink] = useState(null);
+  const [showSourceSitesView, setShowSourceSitesView] = useState(false);
   
   const [dynamicTypes, setDynamicTypes] = useState([]);
   const [showAddType, setShowAddType] = useState(false);
@@ -19,6 +22,7 @@ export default function Backlinks() {
     client_id: "",
     source_site_id: "",
     type: "Guest Post",
+    link_type: "DoFollow",
     target_url: "",
     anchor_text: "",
     placement_url: "",
@@ -205,6 +209,7 @@ export default function Backlinks() {
       client_id: "",
       source_site_id: "",
       type: "Guest Post",
+      link_type: "DoFollow",
       target_url: "",
       anchor_text: "",
       placement_url: "",
@@ -214,6 +219,77 @@ export default function Backlinks() {
       quality_score: 3,
       traffic_estimated: 0
     });
+  };
+
+  const handleTypeChange = async (sourceId, newType) => {
+    // Find the backlink associated with this source
+    const associatedBacklink = backlinks.find(b => b.source_site_id === sourceId);
+    
+    if (!associatedBacklink) {
+      // If no backlink exists, we can't update the type
+      alert('No backlink found for this source site. Please create a backlink first.');
+      return;
+    }
+
+    try {
+      // Update the backlink type with only the required fields
+      const res = await api.put(`/backlinks/${associatedBacklink.id}`, {
+        client_id: associatedBacklink.client_id,
+        source_site_id: associatedBacklink.source_site_id,
+        type: newType,
+        target_url: associatedBacklink.target_url,
+        anchor_text: associatedBacklink.anchor_text,
+        placement_url: associatedBacklink.placement_url,
+        date_added: associatedBacklink.date_added,
+        status: associatedBacklink.status,
+        cost: associatedBacklink.cost,
+        quality_score: associatedBacklink.quality_score,
+        traffic_estimated: associatedBacklink.traffic_estimated
+      });
+      
+      // Update the backlinks array
+      setBacklinks(backlinks.map(b => b.id === associatedBacklink.id ? res.data : b));
+      console.log('Type updated successfully!');
+    } catch (error) {
+      console.error('Error updating backlink type:', error);
+      alert('Error updating type');
+    }
+  };
+
+  const handleLinkTypeChange = async (sourceId, newLinkType) => {
+    // Find the backlink associated with this source
+    const associatedBacklink = backlinks.find(b => b.source_site_id === sourceId);
+    
+    if (!associatedBacklink) {
+      // If no backlink exists, we can't update the link type
+      alert('No backlink found for this source site. Please create a backlink first.');
+      return;
+    }
+
+    try {
+      // Update the backlink link_type with only the required fields
+      const res = await api.put(`/backlinks/${associatedBacklink.id}`, {
+        client_id: associatedBacklink.client_id,
+        source_site_id: associatedBacklink.source_site_id,
+        type: associatedBacklink.type,
+        link_type: newLinkType,
+        target_url: associatedBacklink.target_url,
+        anchor_text: associatedBacklink.anchor_text,
+        placement_url: associatedBacklink.placement_url,
+        date_added: associatedBacklink.date_added,
+        status: associatedBacklink.status,
+        cost: associatedBacklink.cost,
+        quality_score: associatedBacklink.quality_score,
+        traffic_estimated: associatedBacklink.traffic_estimated
+      });
+      
+      // Update the backlinks array
+      setBacklinks(backlinks.map(b => b.id === associatedBacklink.id ? res.data : b));
+      console.log('Link type updated successfully!');
+    } catch (error) {
+      console.error('Error updating backlink link type:', error);
+      alert('Error updating link type');
+    }
   };
 
   const getStatusColor = (status) => {
@@ -256,6 +332,113 @@ export default function Backlinks() {
     }
   }, [formData.quality_score]);
 
+  const exportToCSV = () => {
+    // Prepare CSV data
+    const csvData = sources.map(source => {
+      // Find associated client through backlinks
+      const associatedBacklink = backlinks.find(b => b.source_site_id === source.id);
+      const associatedClient = associatedBacklink ? clients.find(c => c.id === associatedBacklink.client_id) : null;
+      
+      return {
+        Website: source.domain,
+        Cost: associatedBacklink?.cost || 0,
+        LinkType: associatedBacklink?.link_type || 'DoFollow',
+        ContactEmail: associatedClient?.contact_email || '-',
+        SpamScore: source.spam_score || 0
+      };
+    });
+
+    // Create CSV content with semicolon delimiter and UTF-8 BOM
+    const headers = ['Website', 'Cost', 'Link Type', 'Contact Email', 'Spam Score'];
+    const csvContent = [
+      '\uFEFF' + headers.join(';'), // Add UTF-8 BOM for Excel
+      ...csvData.map(row => [
+        `"${row.Website}"`,
+        row.Cost,
+        `"${row.LinkType}"`,
+        `"${row.ContactEmail}"`,
+        row.SpamScore
+      ].join(';'))
+    ].join('\n');
+
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    // Generate filename with date
+    const today = new Date().toLocaleDateString();
+    const filename = `Backlinks_Report_${today}.csv`;
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const exportToPDF = () => {
+    // Prepare PDF data
+    const pdfData = sources.map(source => {
+      // Find associated client through backlinks
+      const associatedBacklink = backlinks.find(b => b.source_site_id === source.id);
+      const associatedClient = associatedBacklink ? clients.find(c => c.id === associatedBacklink.client_id) : null;
+      
+      return [
+        source.domain,
+        `$${associatedBacklink?.cost || 0}`,
+        associatedBacklink?.link_type || 'DoFollow',
+        associatedClient?.contact_email || '-',
+        `${source.spam_score || 0}%`
+      ];
+    });
+
+    // Create PDF
+    const doc = new jsPDF();
+    const today = new Date().toLocaleDateString();
+    
+    // Add title
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Source Sites Summary Report', 14, 20);
+    
+    // Add date
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Date: ${today}`, 14, 30);
+    
+    // Add table using autoTable
+    autoTable(doc, {
+      head: [['Website', 'Cost', 'Type', 'Email', 'Spam']],
+      body: pdfData,
+      startY: 40,
+      styles: {
+        font: 'helvetica',
+        fontSize: 10,
+        cellPadding: 3
+      },
+      headStyles: {
+        fillColor: [59, 130, 246],
+        textColor: 255,
+        fontStyle: 'bold'
+      },
+      alternateRowStyles: {
+        fillColor: [245, 245, 245]
+      },
+      columnStyles: {
+        0: { cellWidth: 40 }, // Website
+        1: { cellWidth: 20, halign: 'right' }, // Cost
+        2: { cellWidth: 25, halign: 'center' }, // Type
+        3: { cellWidth: 50 }, // Email
+        4: { cellWidth: 20, halign: 'center' } // Spam
+      }
+    });
+    
+    // Save PDF
+    doc.save(`Backlinks_Report_${today}.pdf`);
+  };
+
   if (loading) return <div className="loading">Loading...</div>;
 
   return (
@@ -264,9 +447,14 @@ export default function Backlinks() {
       <div className="backlinks-content">
         <div className="backlinks-header">
           <h2>Backlinks Management</h2>
-          <button className="add-backlink-btn" onClick={() => { resetForm(); setEditingBacklink(null); setShowForm(!showForm); }}>
-            {editingBacklink ? 'Edit Backlink' : 'Add Backlink'}
-          </button>
+          <div className="header-buttons">
+            <button className="source-sites-view-btn" onClick={() => setShowSourceSitesView(true)}>
+              Source Sites View
+            </button>
+            <button className="add-backlink-btn" onClick={() => { resetForm(); setEditingBacklink(null); setShowForm(!showForm); }}>
+              {editingBacklink ? 'Edit Backlink' : 'Add Backlink'}
+            </button>
+          </div>
         </div>
 
         {showForm && (
@@ -373,15 +561,24 @@ export default function Backlinks() {
                 </div>
                 </div>
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <label style={{ fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '4px' }}>PLACEMENT URL</label>
-                  <input value={formData.placement_url} onChange={e=>setFormData({...formData, placement_url: e.target.value})} placeholder="ex: https://blog.com/article" />
+                  <label style={{ fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '4px' }}>LINK TYPE</label>
+                  <select value={formData.link_type} onChange={e=>setFormData({...formData, link_type: e.target.value})}>
+                    <option value="DoFollow">DoFollow</option>
+                    <option value="NoFollow">NoFollow</option>
+                  </select>
                 </div>
               </div>
               <div className="form-row">
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <label style={{ fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '4px' }}>PLACEMENT URL</label>
+                  <input value={formData.placement_url} onChange={e=>setFormData({...formData, placement_url: e.target.value})} placeholder="ex: https://blog.com/article" />
+                </div>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <label style={{ fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '4px' }}>DATE ADDED</label>
                   <input type="date" value={formData.date_added} onChange={e=>setFormData({...formData, date_added: e.target.value})} />
                 </div>
+              </div>
+              <div className="form-row">
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <label style={{ fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '4px' }}>STATUS</label>
                   <select value={formData.status} onChange={e=>setFormData({...formData, status: e.target.value})}>
@@ -463,6 +660,87 @@ export default function Backlinks() {
           </table>
         </div>
       </div>
+
+      {/* Source Sites View Modal */}
+      {showSourceSitesView && (
+        <div className="modal-overlay">
+          <div className="modal source-sites-modal">
+            <div className="modal-header">
+              <div className="modal-header-left">
+                <h3>Source Sites Summary</h3>
+              </div>
+              <div className="modal-header-right">
+                <button className="export-csv-btn" onClick={exportToCSV}>
+                  Export Excel
+                </button>
+                <button className="export-pdf-btn" onClick={exportToPDF}>
+                  Export PDF
+                </button>
+                <button className="close-btn" onClick={() => setShowSourceSitesView(false)}>×</button>
+              </div>
+            </div>
+            <div className="modal-content">
+              <div className="source-sites-table-container">
+                {sources.length === 0 ? (
+                  <div className="no-sources">
+                    <p>No source sites found</p>
+                  </div>
+                ) : (
+                  <table className="source-sites-summary-table">
+                    <thead>
+                      <tr>
+                        <th>Website</th>
+                        <th>Cost</th>
+                        <th>Link Type</th>
+                        <th>Contact Email</th>
+                        <th>Spam</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sources.map(source => {
+                        // Find associated client through backlinks
+                        const associatedBacklink = backlinks.find(b => b.source_site_id === source.id);
+                        const associatedClient = associatedBacklink ? clients.find(c => c.id === associatedBacklink.client_id) : null;
+                        
+                        return (
+                          <tr key={source.id}>
+                            <td className="website-cell">
+                              <a href={`https://${source.domain}`} target="_blank" rel="noopener noreferrer">
+                                {source.domain}
+                              </a>
+                            </td>
+                            <td className="cost-cell">
+                              ${associatedBacklink?.cost || '0'}
+                            </td>
+                            <td className="link-type-cell">
+                              <select 
+                                value={associatedBacklink?.link_type || 'DoFollow'} 
+                                onChange={(e) => handleLinkTypeChange(source.id, e.target.value)}
+                                className="link-type-dropdown"
+                              >
+                                <option value="DoFollow">DoFollow</option>
+                                <option value="NoFollow">NoFollow</option>
+                              </select>
+                            </td>
+                            <td className="email-cell">
+                              {associatedClient?.contact_email || '-'}
+                            </td>
+                            <td className="spam-cell">
+                              <span className={`spam-score ${source.spam_score > 30 ? 'spam-danger' : 'spam-safe'}`}>
+                                {source.spam_score || 0}%
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

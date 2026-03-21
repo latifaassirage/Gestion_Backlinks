@@ -9,7 +9,7 @@ class Client extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['company_name', 'website', 'city', 'state', 'notes'];
+    protected $fillable = ['company_name', 'contact_email', 'website', 'city', 'state', 'notes'];
 
     public function backlinks()
     {

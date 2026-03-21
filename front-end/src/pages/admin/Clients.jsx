@@ -6,6 +6,7 @@ import "./Clients.css";
 
 function ClientModal({ onClose, onSave, initialData }) {
   const [companyName, setCompanyName] = useState(initialData?.company_name || "");
+  const [contactEmail, setContactEmail] = useState(initialData?.contact_email || "");
   const [website, setWebsite] = useState(initialData?.website || "");
   const [city, setCity] = useState(initialData?.city || "");
   const [state, setState] = useState(initialData?.state || "");
@@ -13,7 +14,14 @@ function ClientModal({ onClose, onSave, initialData }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const clientData = { company_name: companyName, website, city, state, notes };
+    const clientData = { 
+      company_name: companyName, 
+      contact_email: contactEmail,
+      website, 
+      city, 
+      state, 
+      notes 
+    };
     await onSave(clientData);
     onClose();
   };
@@ -21,14 +29,68 @@ function ClientModal({ onClose, onSave, initialData }) {
   return (
     <div className="modal-overlay">
       <div className="modal">
-        <h3>{initialData ? "Edit Client" : "Add Client"}</h3>
+        <div className="modal-header">
+          <h3 style={{ textAlign: 'right' }}>{initialData ? "Edit Client" : "Add Client"}</h3>
+        </div>
         <form onSubmit={handleSubmit}>
-          <input placeholder="Company Name" value={companyName} onChange={e => setCompanyName(e.target.value)} required />
-          <input placeholder="Website" value={website} onChange={e => setWebsite(e.target.value)} required />
-          <input placeholder="City" value={city} onChange={e => setCity(e.target.value)} />
-          <input placeholder="State" value={state} onChange={e => setState(e.target.value)} />
-          <textarea placeholder="Notes" value={notes} onChange={e => setNotes(e.target.value)} />
-          <div className="modal-buttons">
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Company Name</label>
+              <input 
+                placeholder="Company Name" 
+                value={companyName} 
+                onChange={e => setCompanyName(e.target.value)} 
+                required 
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Contact Email</label>
+              <input 
+                type="email" 
+                placeholder="Contact Email" 
+                value={contactEmail} 
+                onChange={e => setContactEmail(e.target.value)} 
+              />
+            </div>
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Website</label>
+              <input 
+                placeholder="Website" 
+                value={website} 
+                onChange={e => setWebsite(e.target.value)} 
+                required 
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">City</label>
+              <input 
+                placeholder="City" 
+                value={city} 
+                onChange={e => setCity(e.target.value)} 
+              />
+            </div>
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">State</label>
+              <input 
+                placeholder="State" 
+                value={state} 
+                onChange={e => setState(e.target.value)} 
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Notes</label>
+              <textarea 
+                placeholder="Notes" 
+                value={notes} 
+                onChange={e => setNotes(e.target.value)} 
+              />
+            </div>
+          </div>
+          <div className="modal-buttons" style={{ textAlign: 'right' }}>
             <button type="submit">Save</button>
             <button type="button" onClick={onClose}>Cancel</button>
           </div>
@@ -118,6 +180,7 @@ export default function Clients() {
               <thead>
                 <tr>
                   <th>Company Name</th>
+                  <th>Contact Email</th>
                   <th>Website</th>
                   <th>City</th>
                   <th>State</th>
@@ -129,6 +192,7 @@ export default function Clients() {
                 {clients.map(client => (
                   <tr key={client.id}>
                     <td>{client.company_name}</td>
+                    <td>{client.contact_email}</td>
                     <td><a href={`https://${client.website}`} target="_blank" rel="noopener noreferrer">{client.website}</a></td>
                     <td>{client.city || '-'}</td>
                     <td>{client.state || '-'}</td>

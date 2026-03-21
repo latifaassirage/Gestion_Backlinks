@@ -14,6 +14,7 @@ return new class extends Migration
             $table->integer('quality_score');
             $table->integer('dr')->nullable();
             $table->integer('traffic_estimated')->nullable();
+            $table->integer('spam_score')->default(0);
             $table->text('notes')->nullable();
             $table->timestamps();
         });

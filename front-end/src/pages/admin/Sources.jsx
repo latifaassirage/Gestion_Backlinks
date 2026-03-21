@@ -9,6 +9,7 @@ function AddSourceModal({ onClose, onSave, source }) {
   const [qualityScore, setQualityScore] = useState(source?.quality_score || 1);
   const [dr, setDr] = useState(source?.dr || "");
   const [traffic, setTraffic] = useState(source?.traffic_estimated || "");
+  const [spamScore, setSpamScore] = useState(source?.spam_score || 0);
   const [notes, setNotes] = useState(source?.notes || "");
 
   const handleSubmit = async (e) => {
@@ -18,6 +19,7 @@ function AddSourceModal({ onClose, onSave, source }) {
       quality_score: qualityScore,
       dr,
       traffic_estimated: traffic ? Number(traffic) : null,
+      spam_score: Number(spamScore),
       notes
     };
     await onSave(newSource, source?.id);
@@ -27,18 +29,23 @@ function AddSourceModal({ onClose, onSave, source }) {
   return (
     <div className="modal-overlay">
       <div className="modal">
-        <h3>{source ? "Edit" : "Add"} Source Website</h3>
+        <div className="modal-header">
+          <h3 style={{ textAlign: 'right' }}>{source ? "Edit" : "Add"} Source Website</h3>
+        </div>
         <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder="Domain"
-            value={domain}
-            onChange={e => setDomain(e.target.value)}
-            required
-          />
           <div className="form-row">
-            <div className="quality-input">
-              <label>Quality Score</label>
+            <div className="form-group">
+              <label className="form-label">Website URL</label>
+              <input
+                type="text"
+                placeholder="Domain"
+                value={domain}
+                onChange={e => setDomain(e.target.value)}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Quality Score</label>
               <select value={qualityScore} onChange={e => setQualityScore(Number(e.target.value))}>
                 <option value={1}>1</option>
                 <option value={2}>2</option>
@@ -47,25 +54,49 @@ function AddSourceModal({ onClose, onSave, source }) {
                 <option value={5}>5</option>
               </select>
             </div>
-            <input
-              type="text"
-              placeholder="DR"
-              value={dr}
-              onChange={e => setDr(e.target.value)}
-            />
           </div>
-          <input
-            type="number"
-            placeholder="Traffic"
-            value={traffic}
-            onChange={e => setTraffic(e.target.value)}
-          />
-          <textarea
-            placeholder="Notes"
-            value={notes}
-            onChange={e => setNotes(e.target.value)}
-          />
-          <div className="form-actions">
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">DR</label>
+              <input
+                type="text"
+                placeholder="DR"
+                value={dr}
+                onChange={e => setDr(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Traffic</label>
+              <input
+                type="number"
+                placeholder="Traffic"
+                value={traffic}
+                onChange={e => setTraffic(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Spam Score (%)</label>
+              <input
+                type="number"
+                placeholder="Spam Score (0-100)"
+                value={spamScore}
+                onChange={e => setSpamScore(e.target.value)}
+                min="0"
+                max="100"
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Notes</label>
+              <textarea
+                placeholder="Notes"
+                value={notes}
+                onChange={e => setNotes(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="form-actions" style={{ textAlign: 'right' }}>
             <button type="submit" className="submit-btn">Save</button>
             <button type="button" className="cancel-btn" onClick={onClose}>Cancel</button>
           </div>
@@ -123,6 +154,11 @@ export default function Sources() {
 
   const renderQualityStars = (score) => "⭐".repeat(score) + "☆".repeat(5 - score);
 
+  const getSpamScoreColor = (score) => {
+    const numScore = parseInt(score) || 0;
+    return numScore > 30 ? 'spam-danger' : 'spam-safe';
+  };
+
   useEffect(() => { fetchSources(); }, []);
 
   if (loading) return <div className="loading">Loading sources...</div>;
@@ -154,6 +190,7 @@ export default function Sources() {
                   <th>Quality Score</th>
                   <th>DR</th>
                   <th>Traffic</th>
+                  <th>Spam Score</th>
                   <th>Notes</th>
                   {isAdmin && <th>Actions</th>}
                 </tr>
@@ -169,6 +206,11 @@ export default function Sources() {
                     <td className="quality-score">{renderQualityStars(source.quality_score)}</td>
                     <td className="dr">{source.dr || '-'}</td>
                     <td className="traffic">{source.traffic_estimated !== undefined && source.traffic_estimated !== null ? Number(source.traffic_estimated).toLocaleString() : '-'}</td>
+                    <td className="spam-score">
+                      <span className={`spam-score ${getSpamScoreColor(source.spam_score)}`}>
+                        {source.spam_score || 0}%
+                      </span>
+                    </td>
                     <td className="notes">{source.notes || '-'}</td>
                     {isAdmin && (
                       <td className="actions">

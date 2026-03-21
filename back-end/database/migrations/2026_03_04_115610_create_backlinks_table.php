@@ -13,6 +13,7 @@ return new class extends Migration
             $table->foreignId('client_id')->constrained('clients')->onDelete('cascade');
             $table->foreignId('source_site_id')->constrained('source_sites')->onDelete('cascade');
             $table->string('type');
+            $table->string('link_type')->default('DoFollow');
             $table->string('target_url');
             $table->string('anchor_text')->nullable();
             $table->string('placement_url')->nullable();

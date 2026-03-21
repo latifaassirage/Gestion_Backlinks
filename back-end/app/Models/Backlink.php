@@ -10,7 +10,7 @@ class Backlink extends Model
     use HasFactory;
 
     protected $fillable = [
-        'client_id', 'source_site_id', 'type', 'target_url', 'anchor_text',
+        'client_id', 'source_site_id', 'type', 'link_type', 'target_url', 'anchor_text',
         'placement_url', 'date_added', 'status', 'cost', 'quality_score', 'traffic_estimated'
     ];
 
