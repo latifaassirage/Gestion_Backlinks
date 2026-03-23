@@ -30,6 +30,7 @@ Route::middleware(['auth:sanctum', 'staff'])->group(function(){
     Route::get('/all-backlinks', [BacklinkController::class, 'all']);
     Route::get('/summary-sources', [BacklinkController::class, 'getSummarySources']);
     Route::put('/summary-sources/{id}', [BacklinkController::class, 'updateSummarySource']);
+    Route::delete('/summary-sources/{id}', [BacklinkController::class, 'deleteSummarySource']);
 });
 
 // Admin only routes

@@ -606,6 +606,11 @@
   color: #28a745;
 }
 
+.actions-cell {
+  padding: 0.5rem;
+  text-align: center;
+}
+
 .type-dropdown {
   padding: 0.5rem;
   border: 1px solid #ddd;

@@ -360,7 +360,7 @@
   text-decoration: underline;
 }
 
-/* Cost Cell */
+
 .cost-cell {
   min-width: 80px;
   font-weight: 600;
@@ -377,7 +377,7 @@
   color: #007bff;
 }
 
-/* Actions Cell */
+
 .actions-cell {
   min-width: 80px;
   text-align: center;

@@ -16,7 +16,7 @@ export default function Backlinks() {
   const [editingBacklink, setEditingBacklink] = useState(null);
   const [showSourceSitesView, setShowSourceSitesView] = useState(false);
   
-  // S'assurer que les variables sont bien des tableaux même pendant le chargement
+  
   const safeBacklinks = Array.isArray(backlinks) ? backlinks : [];
   const safeClients = Array.isArray(clients) ? clients : [];
   const safeSources = Array.isArray(sources) ? sources : [];
@@ -26,7 +26,7 @@ export default function Backlinks() {
   const [showAddType, setShowAddType] = useState(false);
   const [newTypeName, setNewTypeName] = useState("");
 
-  // États pour la pagination des summary sources
+ 
   const [summaryPagination, setSummaryPagination] = useState({
     current_page: 1,
     last_page: 1,
@@ -34,7 +34,7 @@ export default function Backlinks() {
     total: 0
   });
 
-  // États pour la pagination des backlinks
+ 
   const [backlinksPagination, setBacklinksPagination] = useState({
     current_page: 1,
     last_page: 1,
@@ -75,8 +75,7 @@ export default function Backlinks() {
       return;
     }
     
-    // Vérifier si le type existe déjà (casse insensible)
-    const existingTypes = [
+        const existingTypes = [
       'Guest Post', 'Directory', 'Profile', 'Comment',
       ...dynamicTypes.map(t => t.name.toLowerCase())
     ];
@@ -103,7 +102,7 @@ export default function Backlinks() {
         await api.delete(`/backlink-types/${typeId}`);
         setDynamicTypes(dynamicTypes.filter(t => t.id !== typeId));
         
-        // Si le type supprimé était sélectionné, réinitialiser à vide
+        
         if (formData.type === typeName) {
           setFormData({ ...formData, type: "" });
         }
@@ -112,9 +111,9 @@ export default function Backlinks() {
       } catch (error) {
         console.error("Error deleting type:", error);
         
-        // Gérer les erreurs spécifiques du backend
+        
         if (error.response?.status === 422) {
-          // Le type est utilisé par des backlinks
+        
           alert(error.response.data.message || 'Ce type ne peut pas être supprimé car il est utilisé par des backlinks existants.');
         } else if (error.response?.status === 404) {
           alert('Type non trouvé ou déjà supprimé');
@@ -156,7 +155,7 @@ export default function Backlinks() {
     try {
       const res = await api.get("/all-sources");
       console.log("All sources response:", res.data);
-      setSources(res.data.data || res.data || []); // Support both formats
+      setSources(res.data.data || res.data || []); 
     } catch (error) {
       console.error("Error fetching sources:", error);
     }
@@ -168,7 +167,6 @@ export default function Backlinks() {
       console.log("Summary sources data received:", res.data);
       console.log("Number of summary sources:", res.data.data?.length || 0);
       
-      // Mettre à jour les données et la pagination
       setSummarySources(res.data.data || []);
       setSummaryPagination({
         current_page: res.data.current_page || 1,
@@ -211,7 +209,7 @@ export default function Backlinks() {
       resetForm();
       setShowForm(false);
       alert("Backlink created successfully!");
-      // Revenir à la première page après création
+      
       fetchBacklinks(1);
     } catch (error) {
       alert("Error adding backlink");
@@ -244,7 +242,7 @@ export default function Backlinks() {
       try {
         await api.delete(`/backlinks/${id}`);
         setBacklinks(safeBacklinks.filter(b => b.id !== id));
-        // Revenir à la première page après suppression
+      
         fetchBacklinks(1);
       } catch (error) {
         alert("Error deleting backlink");
@@ -276,17 +274,17 @@ export default function Backlinks() {
   };
 
   const handleTypeChange = async (sourceId, newType) => {
-    // Find the backlink associated with this source
+  
     const associatedBacklink = backlinks.find(b => b.source_site_id === sourceId);
     
     if (!associatedBacklink) {
-      // If no backlink exists, we can't update the type
+     
       alert('No backlink found for this source site. Please create a backlink first.');
       return;
     }
 
     try {
-      // Update the backlink type with only the required fields
+     
       const res = await api.put(`/backlinks/${associatedBacklink.id}`, {
         client_id: associatedBacklink.client_id,
         source_site_id: associatedBacklink.source_site_id,
@@ -301,9 +299,9 @@ export default function Backlinks() {
         traffic_estimated: associatedBacklink.traffic_estimated
       });
       
-      // Update the backlinks array
+      
       setBacklinks(safeBacklinks.map(b => b.id === associatedBacklink.id ? res.data : b));
-      // Revenir à la première page après modification
+      
       fetchBacklinks(1);
       console.log('Type updated successfully!');
     } catch (error) {
@@ -313,17 +311,17 @@ export default function Backlinks() {
   };
 
   const handleLinkTypeChange = async (sourceId, newLinkType) => {
-    // Find the backlink associated with this source
+   
     const associatedBacklink = backlinks.find(b => b.source_site_id === sourceId);
     
     if (!associatedBacklink) {
-      // If no backlink exists, we can't update the link type
+      
       alert('No backlink found for this source site. Please create a backlink first.');
       return;
     }
 
     try {
-      // Update the backlink link_type with only the required fields
+     
       const res = await api.put(`/backlinks/${associatedBacklink.id}`, {
         client_id: associatedBacklink.client_id,
         source_site_id: associatedBacklink.source_site_id,
@@ -339,9 +337,9 @@ export default function Backlinks() {
         traffic_estimated: associatedBacklink.traffic_estimated
       });
       
-      // Update the backlinks array
+      
       setBacklinks(safeBacklinks.map(b => b.id === associatedBacklink.id ? res.data : b));
-      // Revenir à la première page après modification
+     
       fetchBacklinks(1);
       console.log('Link type updated successfully!');
     } catch (error) {
@@ -356,7 +354,7 @@ export default function Backlinks() {
         link_type: newLinkType
       });
       
-      // Rafraîchir les données summarySources pour obtenir les valeurs à jour
+      
       await fetchSummarySources();
       console.log('Summary link type updated successfully!');
     } catch (error) {
@@ -365,7 +363,26 @@ export default function Backlinks() {
     }
   };
 
-  // Fonctions de navigation pour la pagination des summary sources
+  const handleDeleteSummarySource = async (sourceId) => {
+    if (!window.confirm("Are you sure you want to delete this source site?")) return;
+    
+    try {
+      await api.delete(`/summary-sources/${sourceId}`);
+      await fetchSummarySources(); // Rafraîchir la liste après suppression
+      console.log('Summary source deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting summary source:', error);
+      if (error.response?.status === 403) {
+        alert('Ce site source ne peut pas être supprimé car il est utilisé par des backlinks existants.');
+      } else if (error.response?.status === 404) {
+        alert('Site source non trouvé ou déjà supprimé');
+      } else {
+        alert("Erreur lors de la suppression du site source");
+      }
+    }
+  };
+
+  
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= summaryPagination.last_page) {
       fetchSummarySources(newPage);
@@ -376,7 +393,7 @@ export default function Backlinks() {
     const { current_page, last_page } = summaryPagination;
     const pages = [];
     
-    // Afficher toujours la première page
+    
     if (current_page > 3) {
       pages.push(1);
       if (current_page > 4) {
@@ -384,12 +401,12 @@ export default function Backlinks() {
       }
     }
     
-    // Afficher les pages autour de la page actuelle
+    
     for (let i = Math.max(1, current_page - 2); i <= Math.min(last_page, current_page + 2); i++) {
       pages.push(i);
     }
     
-    // Afficher la dernière page
+   
     if (current_page < last_page - 2) {
       if (current_page < last_page - 3) {
         pages.push('...');
@@ -410,7 +427,7 @@ export default function Backlinks() {
             {summaryPagination.total} résultats
           </span>
         </div>
-        
+      
         <div className="pagination-buttons">
           <button
             className="pagination-btn"
@@ -935,6 +952,7 @@ export default function Backlinks() {
                         <th>Link Type</th>
                         <th>Contact Email</th>
                         <th>Spam</th>
+                        <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -966,6 +984,14 @@ export default function Backlinks() {
                               <span className={`spam-score ${source.spam > 30 ? 'spam-danger' : 'spam-safe'}`}>
                                 {source.spam || 0}%
                               </span>
+                            </td>
+                            <td className="actions-cell">
+                              <button 
+                                className="delete-btn" 
+                                onClick={() => handleDeleteSummarySource(source.id)}
+                              >
+                                Delete
+                              </button>
                             </td>
                           </tr>
                         );

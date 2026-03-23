@@ -589,4 +589,18 @@ class BacklinkController extends Controller
             return response()->json(['message' => 'Erreur lors de l\'importation: ' . $e->getMessage()], 500);
         }
     }
+
+    public function deleteSummarySource($id)
+    {
+        try {
+            $summary = SourceSummary::findOrFail($id);
+            $summary->delete();
+            
+            return response()->json(['message' => 'Source summary deleted successfully']);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['message' => 'Source summary not found'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error deleting source summary: ' . $e->getMessage()], 500);
+        }
+    }
 }
