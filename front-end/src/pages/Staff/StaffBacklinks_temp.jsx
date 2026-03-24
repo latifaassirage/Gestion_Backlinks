@@ -13,6 +13,19 @@ export default function StaffBacklinks() {
   
   const [dynamicTypes, setDynamicTypes] = useState([]);
   
+  // État pour la visibilité des colonnes configurée par l'admin
+  const [columnVisibility, setColumnVisibility] = useState({
+    client: true,
+    source_site: true,
+    traffic: true,
+    quality: true,
+    type: true,
+    status: true,
+    date: true,
+    cost: true,
+    actions: true,
+  });
+  
   const [formData, setFormData] = useState({
     client_id: "",
     source_site_id: "",
@@ -39,7 +52,36 @@ export default function StaffBacklinks() {
   useEffect(() => {
     fetchData();
     fetchTypes();
+    fetchColumnVisibilitySettings();
   }, []);
+
+  const fetchColumnVisibilitySettings = async () => {
+    try {
+      const response = await api.get('/settings/staff-column-visibility');
+      const settings = response.data;
+      
+      console.log('Raw settings from API:', settings);
+      
+      // Map backend settings to frontend column names
+      const mappedSettings = {
+        client: settings.client || true,
+        source_site: settings.source || true, // Map 'source' to 'source_site'
+        traffic: settings.traffic || true,
+        quality: settings.quality || true,
+        type: settings.type || true,
+        status: settings.status || true,
+        date: settings.date_added || true, // Map 'date_added' to 'date'
+        cost: settings.cost || true,
+        actions: true, // Actions column is always visible
+      };
+      
+      console.log('Mapped settings for frontend:', mappedSettings);
+      setColumnVisibility(mappedSettings);
+    } catch (error) {
+      console.error('Error fetching column visibility settings:', error);
+      // Utiliser les valeurs par défaut si l'API échoue
+    }
+  };
 
   useEffect(() => {
     if (formData.source_site_id && sources.length > 0) {
@@ -112,20 +154,16 @@ export default function StaffBacklinks() {
       let submitData;
       
       if (editingBacklink) {
-        
         submitData = {
           ...formData,
-          link_type: "DoFollow", // Valeur par défaut pour le Staff
           quality_score: formData.quality_score,
           traffic_estimated: parseInt(formData.traffic_estimated || 0)
         };
         console.log("📝 Editing backlink with data:", submitData);
       } else {
-        
         const source = sources.find(s => s.id === formData.source_site_id);
         submitData = {
           ...formData,
-          link_type: "DoFollow", // Valeur par défaut pour le Staff
           quality_score: source?.quality_score || 3,
           traffic_estimated: parseInt(source?.traffic_estimated || source?.traffic || 0)
         };
@@ -203,9 +241,25 @@ export default function StaffBacklinks() {
       <StaffNavbar />
       <div className="page-header">
         <h1>Backlinks Management</h1>
-        <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
-          {showForm ? "Cancel" : "Add Backlink"}
-        </button>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
+            {showForm ? "Cancel" : "Add Backlink"}
+          </button>
+          <button 
+            className="btn btn-secondary" 
+            onClick={() => setColumnVisibility(prev => ({...prev, cost: !prev.cost}))}
+            title="Toggle Cost Column"
+          >
+            {columnVisibility.cost ? 'Hide Cost' : 'Show Cost'}
+          </button>
+          <button 
+            className="btn btn-secondary" 
+            onClick={() => setColumnVisibility(prev => ({...prev, quality: !prev.quality}))}
+            title="Toggle Quality Column"
+          >
+            {columnVisibility.quality ? 'Hide Quality' : 'Show Quality'}
+          </button>
+        </div>
       </div>
 
       {showForm && (
@@ -278,29 +332,29 @@ export default function StaffBacklinks() {
           <table>
             <thead>
               <tr>
-                <th>Client</th>
-                <th>Source Site</th>
-                <th>Traffic</th>
-                <th>Quality</th>
-                <th>Type</th>
-                <th>Status</th>
-                <th>Date</th>
-                <th>Cost</th>
-                <th>Actions</th>
+                {columnVisibility.client && <th>Client</th>}
+                {columnVisibility.source_site && <th>Source Site</th>}
+                {columnVisibility.traffic && <th>Traffic</th>}
+                {columnVisibility.quality && <th>Quality</th>}
+                {columnVisibility.type && <th>Type</th>}
+                {columnVisibility.status && <th>Status</th>}
+                {columnVisibility.date && <th>Date</th>}
+                {columnVisibility.cost && <th>Cost</th>}
+                {columnVisibility.actions && <th>Actions</th>}
               </tr>
             </thead>
             <tbody>
               {backlinks.map(backlink => (
                 <tr key={backlink.id}>
-                  <td>{getClientName(backlink.client_id)}</td>
-                  <td>{backlink.source_site?.domain || backlink.source_site}</td>
-                  <td>{(backlink.source_site?.traffic_estimated || backlink.traffic_estimated || 0).toLocaleString()}</td>
-                  <td>{'⭐'.repeat(backlink.source_site?.quality_score || backlink.quality_score || 3)}</td>
-                  <td>{backlink.type}</td>
-                  <td>{backlink.status}</td>
-                  <td>{new Date(backlink.date_added || backlink.date).toLocaleDateString()}</td>
-                  <td>{backlink.cost}€</td>
-                  <td><button className="btn btn-sm btn-edit" onClick={() => handleEdit(backlink)}>Edit</button></td>
+                  {columnVisibility.client && <td>{getClientName(backlink.client_id)}</td>}
+                  {columnVisibility.source_site && <td>{backlink.source_site?.domain || backlink.source_site}</td>}
+                  {columnVisibility.traffic && <td>{(backlink.source_site?.traffic_estimated || backlink.traffic_estimated || 0).toLocaleString()}</td>}
+                  {columnVisibility.quality && <td>{'⭐'.repeat(backlink.source_site?.quality_score || backlink.quality_score || 3)}</td>}
+                  {columnVisibility.type && <td>{backlink.type}</td>}
+                  {columnVisibility.status && <td>{backlink.status}</td>}
+                  {columnVisibility.date && <td>{new Date(backlink.date_added || backlink.date).toLocaleDateString()}</td>}
+                  {columnVisibility.cost && <td>{backlink.cost}€</td>}
+                  {columnVisibility.actions && <td><button className="btn btn-sm btn-edit" onClick={() => handleEdit(backlink)}>Edit</button></td>}
                 </tr>
               ))}
             </tbody>

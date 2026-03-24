@@ -14422,3 +14422,9 @@ Did you mean one of these?
 #41 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(23): require_once('C://gestion-back...')
 #42 {main}
 "} 
+[2026-03-24 14:54:09] local.INFO: Backlink synchronized to source_summaries {"backlink_id":10,"website":"vvs.com","action":"sync"} 
+[2026-03-24 14:54:22] local.INFO: Backlink synchronized to source_summaries {"backlink_id":10,"website":"vvs.com","action":"sync"} 
+[2026-03-24 15:01:09] local.INFO: Backlink synchronized to source_summaries {"backlink_id":10,"website":"vvs.com","action":"sync"} 
+[2026-03-24 15:01:33] local.INFO: Backlink synchronized to source_summaries {"backlink_id":10,"website":"vvs.com","action":"sync"} 
+[2026-03-24 15:02:06] local.INFO: Backlink synchronized to source_summaries {"backlink_id":10,"website":"vvs.com","action":"sync"} 
+[2026-03-24 15:06:02] local.INFO: Backlink synchronized to source_summaries {"backlink_id":11,"website":"vvs.com","action":"sync"} 

@@ -62,10 +62,15 @@ class BacklinkController extends Controller
 
     public function store(Request $request)
     {
+        // Récupérer les types dynamiques disponibles
+        $availableTypes = \App\Models\BacklinkType::pluck('name')->toArray();
+        $defaultTypes = ['Guest Post', 'Directory', 'Profile', 'Comment', 'Other'];
+        $allTypes = array_merge($defaultTypes, $availableTypes);
+        
         $data = $request->validate([
             'client_id'=>'required|exists:clients,id',
             'source_site_id'=>'required|exists:source_sites,id',
-            'type'=>'required|in:Guest Post,Directory,Profile,Comment,Other',
+            'type'=>'required|string|in:' . implode(',', $allTypes),
             'link_type'=>'required|in:DoFollow,NoFollow',
             'target_url'=>'required|url',
             'anchor_text'=>'required|string',
@@ -97,10 +102,16 @@ class BacklinkController extends Controller
     public function update(Request $request, $id)
     {
         $backlink = Backlink::findOrFail($id);
+        
+        // Récupérer les types dynamiques disponibles
+        $availableTypes = \App\Models\BacklinkType::pluck('name')->toArray();
+        $defaultTypes = ['Guest Post', 'Directory', 'Profile', 'Comment', 'Other'];
+        $allTypes = array_merge($defaultTypes, $availableTypes);
+        
         $data = $request->validate([
             'client_id'=>'sometimes|required|exists:clients,id',
             'source_site_id'=>'sometimes|required|exists:source_sites,id',
-            'type'=>'sometimes|required|in:Guest Post,Directory,Profile,Comment,Other',
+            'type'=>'sometimes|required|string|in:' . implode(',', $allTypes),
             'link_type'=>'sometimes|required|in:DoFollow,NoFollow',
             'target_url'=>'sometimes|required|url',
             'anchor_text'=>'required|string',
