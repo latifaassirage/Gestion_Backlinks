@@ -460,6 +460,41 @@ export default function Backlinks() {
     );
   };
 
+  // Fonctions de pagination pour les backlinks
+  const handleBacklinksPageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= backlinksPagination.last_page) {
+      fetchBacklinks(newPage);
+    }
+  };
+
+  const renderBacklinksPaginationNumbers = () => {
+    const { current_page, last_page } = backlinksPagination;
+    const pages = [];
+    
+    // Afficher toujours la première page
+    if (current_page > 3) {
+      pages.push(1);
+      if (current_page > 4) {
+        pages.push('...');
+      }
+    }
+    
+    // Afficher les pages autour de la page actuelle
+    for (let i = Math.max(1, current_page - 2); i <= Math.min(last_page, current_page + 2); i++) {
+      pages.push(i);
+    }
+    
+    // Afficher la dernière page
+    if (current_page < last_page - 2) {
+      if (current_page < last_page - 3) {
+        pages.push('...');
+      }
+      pages.push(last_page);
+    }
+    
+    return pages;
+  };
+
   const getStatusColor = (status) => {
     switch(status) {
       case 'Live': return 'status-live';
@@ -907,6 +942,48 @@ export default function Backlinks() {
             </tbody>
           </table>
         </div>
+
+        {/* Contrôles de pagination pour les backlinks */}
+        {backlinksPagination.total > 0 && (
+          <div className="pagination-controls">
+            <div className="pagination-info">
+              <span>
+                Affichage de {((backlinksPagination.current_page - 1) * backlinksPagination.per_page) + 1} à{' '}
+                {Math.min(backlinksPagination.current_page * backlinksPagination.per_page, backlinksPagination.total)} sur{' '}
+                {backlinksPagination.total} résultats
+              </span>
+            </div>
+            
+            <div className="pagination-buttons">
+              <button
+                className="pagination-btn"
+                onClick={() => handleBacklinksPageChange(backlinksPagination.current_page - 1)}
+                disabled={backlinksPagination.current_page === 1}
+              >
+                Précédent
+              </button>
+              
+              {renderBacklinksPaginationNumbers().map((page, index) => (
+                <button
+                  key={index}
+                  className={`pagination-btn ${page === backlinksPagination.current_page ? 'active' : ''} ${page === '...' ? 'disabled' : ''}`}
+                  onClick={() => page !== '...' && handleBacklinksPageChange(page)}
+                  disabled={page === '...'}
+                >
+                  {page}
+                </button>
+              ))}
+              
+              <button
+                className="pagination-btn"
+                onClick={() => handleBacklinksPageChange(backlinksPagination.current_page + 1)}
+                disabled={backlinksPagination.current_page === backlinksPagination.last_page}
+              >
+                Suivant
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Source Sites View Modal */}

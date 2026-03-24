@@ -115,14 +115,28 @@ export default function Sources() {
   // S'assurer que sources est toujours un tableau
   const safeSources = Array.isArray(sources) ? sources : [];
 
+  // États pour la pagination
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    last_page: 1,
+    per_page: 10,
+    total: 0
+  });
+
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const isAdmin = user.role === 'admin';
 
-  const fetchSources = async () => {
+  const fetchSources = async (page = 1) => {
     try {
-      const res = await api.get("/sources");
+      const res = await api.get(`/sources?page=${page}&per_page=10`);
       console.log("Sources API response:", res.data);
       setSources(res.data.data || []);
+      setPagination({
+        current_page: res.data.current_page || 1,
+        last_page: res.data.last_page || 1,
+        per_page: res.data.per_page || 10,
+        total: res.data.total || 0
+      });
     } catch (error) {
       console.error("Error fetching sources:", error);
       setSources([]);
@@ -135,13 +149,13 @@ export default function Sources() {
     try {
       if (id) {
         // Edit
-        const res = await api.put(`/sources/${id}`, newSource);
-        setSources(prev => prev.map(s => s.id === id ? res.data : s));
+        await api.put(`/sources/${id}`, newSource);
       } else {
         // Add
-        const res = await api.post("/sources", newSource);
-        setSources(prev => [...prev, res.data]);
+        await api.post("/sources", newSource);
       }
+      // Rafraîchir la liste avec pagination
+      fetchSources(1);
     } catch (error) {
       console.error("Error saving source:", error);
     }
@@ -151,10 +165,46 @@ export default function Sources() {
     if (!window.confirm("Are you sure you want to delete this source?")) return;
     try {
       await api.delete(`/sources/${id}`);
-      setSources(prev => prev.filter(s => s.id !== id));
+      // Rafraîchir la liste avec pagination
+      fetchSources(1);
     } catch (error) {
       console.error("Error deleting source:", error);
     }
+  };
+
+  // Fonctions de navigation pour la pagination
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= pagination.last_page) {
+      fetchSources(newPage);
+    }
+  };
+
+  const renderPaginationNumbers = () => {
+    const { current_page, last_page } = pagination;
+    const pages = [];
+    
+    // Afficher toujours la première page
+    if (current_page > 3) {
+      pages.push(1);
+      if (current_page > 4) {
+        pages.push('...');
+      }
+    }
+    
+    // Afficher les pages autour de la page actuelle
+    for (let i = Math.max(1, current_page - 2); i <= Math.min(last_page, current_page + 2); i++) {
+      pages.push(i);
+    }
+    
+    // Afficher la dernière page
+    if (current_page < last_page - 2) {
+      if (current_page < last_page - 3) {
+        pages.push('...');
+      }
+      pages.push(last_page);
+    }
+    
+    return pages;
   };
 
   const renderQualityStars = (score) => "⭐".repeat(score) + "☆".repeat(5 - score);
@@ -164,7 +214,7 @@ export default function Sources() {
     return numScore > 30 ? 'spam-danger' : 'spam-safe';
   };
 
-  useEffect(() => { fetchSources(); }, []);
+  useEffect(() => { fetchSources(1); }, []);
 
   if (loading) return <div className="loading">Loading sources...</div>;
 
@@ -229,6 +279,48 @@ export default function Sources() {
             </table>
           )}
         </div>
+
+        {/* Contrôles de pagination */}
+        {safeSources.length > 0 && (
+          <div className="pagination-controls">
+            <div className="pagination-info">
+              <span>
+                Affichage de {((pagination.current_page - 1) * pagination.per_page) + 1} à{' '}
+                {Math.min(pagination.current_page * pagination.per_page, pagination.total)} sur{' '}
+                {pagination.total} résultats
+              </span>
+            </div>
+            
+            <div className="pagination-buttons">
+              <button
+                className="pagination-btn"
+                onClick={() => handlePageChange(pagination.current_page - 1)}
+                disabled={pagination.current_page === 1}
+              >
+                Précédent
+              </button>
+              
+              {renderPaginationNumbers().map((page, index) => (
+                <button
+                  key={index}
+                  className={`pagination-btn ${page === pagination.current_page ? 'active' : ''} ${page === '...' ? 'disabled' : ''}`}
+                  onClick={() => page !== '...' && handlePageChange(page)}
+                  disabled={page === '...'}
+                >
+                  {page}
+                </button>
+              ))}
+              
+              <button
+                className="pagination-btn"
+                onClick={() => handlePageChange(pagination.current_page + 1)}
+                disabled={pagination.current_page === pagination.last_page}
+              >
+                Suivant
+              </button>
+            </div>
+          </div>
+        )}
 
         {showModal && (
           <AddSourceModal

@@ -120,34 +120,13 @@ export default function Clients() {
   const fetchClients = async (page = 1) => {
     try {
       const res = await api.get(`/clients?page=${page}&per_page=10`);
-      const clientsData = res.data.data || res.data || []; // Handle both paginated and direct data
-      setClients(clientsData);
-      
-      // Set pagination only if paginated data is available
-      if (res.data.data) {
-        setPagination({
-          current_page: res.data.current_page || 1,
-          last_page: res.data.last_page || 1,
-          per_page: res.data.per_page || 10,
-          total: res.data.total || 0
-        });
-      } else {
-        // For non-paginated data, create simple pagination
-        const perPage = 10;
-        const total = clientsData.length;
-        const lastPage = Math.ceil(total / perPage);
-        const startIndex = (page - 1) * perPage;
-        const endIndex = startIndex + perPage;
-        const paginatedClients = clientsData.slice(startIndex, endIndex);
-        
-        setClients(paginatedClients);
-        setPagination({
-          current_page: page,
-          last_page: lastPage || 1,
-          per_page: perPage,
-          total: total
-        });
-      }
+      setClients(res.data.data || []);
+      setPagination({
+        current_page: res.data.current_page || 1,
+        last_page: res.data.last_page || 1,
+        per_page: res.data.per_page || 10,
+        total: res.data.total || 0
+      });
     } catch (error) {
       console.error("Error fetching clients:", error);
     } finally {
@@ -161,15 +140,13 @@ export default function Clients() {
     try {
       if (editClient) {
         // Update
-        const res = await api.put(`/clients/${editClient.id}`, newClient);
-        setClients(prev => prev.map(c => c.id === editClient.id ? res.data : c));
+        await api.put(`/clients/${editClient.id}`, newClient);
         setEditClient(null);
       } else {
         // Create
-        const res = await api.post("/clients", newClient);
-        setClients(prev => [...prev, res.data]);
+        await api.post("/clients", newClient);
       }
-      // Revenir à la première page après création/modification
+      // Rafraîchir la liste avec pagination
       fetchClients(1);
     } catch (error) {
       console.error("Error saving client:", error);
@@ -180,8 +157,7 @@ export default function Clients() {
     if (!window.confirm("Are you sure you want to delete this client?")) return;
     try {
       await api.delete(`/clients/${id}`);
-      setClients(prev => prev.filter(c => c.id !== id));
-      // Revenir à la première page après suppression
+      // Rafraîchir la liste avec pagination
       fetchClients(1);
     } catch (error) {
       console.error("Error deleting client:", error);

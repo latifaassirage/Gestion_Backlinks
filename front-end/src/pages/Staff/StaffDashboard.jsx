@@ -96,8 +96,8 @@ const StaffDashboard = () => {
         api.get('/backlinks')
       ]);
       
-      const clients = clientsRes.data || [];
-      const backlinks = backlinksRes.data || [];
+      const clients = clientsRes.data.data || [];
+      const backlinks = backlinksRes.data.data || [];
       
       const currentMonth = new Date().getMonth();
       const currentYear = new Date().getFullYear();
@@ -201,7 +201,7 @@ const StaffDashboard = () => {
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="#4F46E5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 <circle cx="9" cy="7" r="4" stroke="#4F46E5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke="#4F46E5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M16 3.13a4 4 0 1 0 7.75" stroke="#4F46E5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M16 3.13a4 4 0 1 0 7.75 0" stroke="#4F46E5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
             <div className="stat-info-enhanced">

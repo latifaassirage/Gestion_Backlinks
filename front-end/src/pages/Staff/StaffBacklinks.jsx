@@ -63,9 +63,9 @@ export default function StaffBacklinks() {
         api.get("/clients"),
         api.get("/sources")
       ]);
-      setBacklinks(backlinksRes.data);
-      setClients(clientsRes.data);
-      setSources(sourcesRes.data);
+      setBacklinks(backlinksRes.data.data || []);
+      setClients(clientsRes.data.data || []);
+      setSources(sourcesRes.data.data || []);
     } catch (error) {
       console.error("Error fetching data:", error);
       setBacklinks([]);

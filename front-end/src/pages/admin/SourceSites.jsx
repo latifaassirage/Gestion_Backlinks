@@ -68,33 +68,22 @@ export default function SourceSites() {
         console.log("URL de la requête:", `/sources/${editingSource.id}`);
         console.log("Données envoyées:", formData);
         
-        const res = await api.put(`/sources/${editingSource.id}`, formData);
-        console.log("Réponse mise à jour:", res.data);
-        
-        // Mettre à jour la liste locale
-        setSources(safeSources.map(s => s.id === editingSource.id ? res.data : s));
+        await api.put(`/sources/${editingSource.id}`, formData);
         alert('Site source mis à jour avec succès!');
         console.log("=== MISE À JOUR TERMINÉE ===");
-        
-        // Revenir à la première page après mise à jour
-        fetchSources(1);
         
       } else {
         // Mode création - POST request
         console.log("=== MODE CRÉATION ===");
         console.log("Données envoyées:", formData);
         
-        const res = await api.post("/sources", formData);
-        console.log("Réponse création:", res.data);
-        
-        // Ajouter à la liste locale
-        setSources([...safeSources, res.data]);
+        await api.post("/sources", formData);
         alert('Site source ajouté avec succès!');
         console.log("=== CRÉATION TERMINÉE ===");
-        
-        // Revenir à la première page après création
-        fetchSources(1);
       }
+      
+      // Rafraîchir la liste avec pagination
+      fetchSources(1);
       
       // Réinitialiser le formulaire
       resetForm();
@@ -392,7 +381,7 @@ export default function SourceSites() {
         </div>
 
         {/* Contrôles de pagination */}
-        {pagination.total > 0 && (
+        {sources.length > 0 && (
           <div className="pagination-controls">
             <div className="pagination-info">
               <span>

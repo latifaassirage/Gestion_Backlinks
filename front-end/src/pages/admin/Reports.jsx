@@ -62,7 +62,7 @@ export default function Reports() {
   const fetchClients = async () => {
     try {
       const res = await api.get("/clients");
-      setClients(res.data);
+      setClients(res.data.data || []);
     } catch (error) {
       console.error("Error fetching clients:", error);
     }
