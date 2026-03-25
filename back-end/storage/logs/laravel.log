@@ -14433,3 +14433,228 @@ Did you mean one of these?
 [2026-03-25 09:44:26] local.INFO: Password reset token for admin@agency.com: 8e37a4ca494f8aa7736e524001bcb9bedb3da308d83d4c9a57c7471bd52ac846  
 [2026-03-25 09:47:45] local.INFO: Password reset token for admin@agency.com: 5b980f628f8e5361dfa746d59e4d0188163121db79f65ead337a00020970c482  
 [2026-03-25 09:48:55] local.INFO: Password reset token for admin@agency.com: 60a2a3541b965fb54541b60bb051d00ebe81db995d9cbcf6dea062c05f8071a4  
+[2026-03-25 10:02:07] local.ERROR: Command "route:list--path=password" is not defined.
+
+Did you mean one of these?
+    route:cache
+    route:clear
+    route:list {"exception":"[object] (Symfony\\Component\\Console\\Exception\\CommandNotFoundException(code: 0): Command \"route:list--path=password\" is not defined.
+
+Did you mean one of these?
+    route:cache
+    route:clear
+    route:list at C:/gestion-backlinks/back-end/vendor/symfony/console/Application.php:759)
+[stacktrace]
+#0 C:/gestion-backlinks/back-end/vendor/symfony/console/Application.php(298): Symfony/Component/Console/Application->find('route:list--pat...')
+#1 C:/gestion-backlinks/back-end/vendor/symfony/console/Application.php(195): Symfony/Component/Console/Application->doRun(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#2 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony/Component/Console/Application->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#3 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1235): Illuminate/Foundation/Console/Kernel->handle(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#4 C:/gestion-backlinks/back-end/artisan(16): Illuminate/Foundation/Application->handleCommand(Object(Symfony/Component/Console/Input/ArgvInput))
+#5 {main}
+"} 
+[2026-03-25 10:11:38] local.INFO: Password reset token for admin@agency.com: 9cf5f869dd1bdad9c1de5ebab6a6e6a137157ded5c56da9196b11620c31ff020  
+[2026-03-25 10:11:41] local.INFO: Password reset token for admin@agency.com: 9462ef9bf08bfc45310d139d37b8dc40f36cbc3e96be05a89b297c47c57c9cb1  
+[2026-03-25 10:12:49] local.ERROR: file_put_contents(C:\gestion-backlinks\back-end\storage\framework/sessions/AbhLcqCoWUhGyc4Cx7TAVushkVKyAwGHLf73Nc5j): Failed to open stream: No such file or directory {"exception":"[object] (ErrorException(code: 0): file_put_contents(C:\\gestion-backlinks\\back-end\\storage\\framework/sessions/AbhLcqCoWUhGyc4Cx7TAVushkVKyAwGHLf73Nc5j): Failed to open stream: No such file or directory at C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Filesystem/Filesystem.php:204)
+[stacktrace]
+#0 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(258): Illuminate/Foundation/Bootstrap/HandleExceptions->handleError(2, 'file_put_conten...', 'C://gestion-back...', 204)
+#1 [internal function]: Illuminate/Foundation/Bootstrap/HandleExceptions->{closure:Illuminate/Foundation/Bootstrap/HandleExceptions::forwardsTo():257}(2, 'file_put_conten...', 'C://gestion-back...', 204)
+#2 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Filesystem/Filesystem.php(204): file_put_contents('C://gestion-back...', 'a:3:{s:6:\"_toke...', 2)
+#3 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Session/FileSessionHandler.php(89): Illuminate/Filesystem/Filesystem->put('C://gestion-back...', 'a:3:{s:6:\"_toke...', true)
+#4 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Session/Store.php(187): Illuminate/Session/FileSessionHandler->write('AbhLcqCoWUhGyc4...', 'a:3:{s:6:\"_toke...')
+#5 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(248): Illuminate/Session/Store->save()
+#6 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(129): Illuminate/Session/Middleware/StartSession->saveSession(Object(Illuminate/Http/Request))
+#7 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(63): Illuminate/Session/Middleware/StartSession->handleStatefulRequest(Object(Illuminate/Http/Request), Object(Illuminate/Session/Store), Object(Closure))
+#8 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Session/Middleware/StartSession->handle(Object(Illuminate/Http/Request), Object(Closure))
+#9 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/AddQueuedCookiesToResponse.php(36): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#10 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Cookie/Middleware/AddQueuedCookiesToResponse->handle(Object(Illuminate/Http/Request), Object(Closure))
+#11 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/EncryptCookies.php(74): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#12 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Cookie/Middleware/EncryptCookies->handle(Object(Illuminate/Http/Request), Object(Closure))
+#13 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(137): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#14 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Routing/Router.php(821): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#15 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Routing/Router.php(800): Illuminate/Routing/Router->runRouteWithinStack(Object(Illuminate/Routing/Route), Object(Illuminate/Http/Request))
+#16 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Routing/Router.php(764): Illuminate/Routing/Router->runRoute(Object(Illuminate/Http/Request), Object(Illuminate/Routing/Route))
+#17 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Routing/Router.php(753): Illuminate/Routing/Router->dispatchToRoute(Object(Illuminate/Http/Request))
+#18 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate/Routing/Router->dispatch(Object(Illuminate/Http/Request))
+#19 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(180): Illuminate/Foundation/Http/Kernel->{closure:Illuminate/Foundation/Http/Kernel::dispatchToRouter():197}(Object(Illuminate/Http/Request))
+#20 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->{closure:Illuminate/Pipeline/Pipeline::prepareDestination():178}(Object(Illuminate/Http/Request))
+#21 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#22 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull->handle(Object(Illuminate/Http/Request), Object(Closure))
+#23 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#24 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(51): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#25 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Foundation/Http/Middleware/TrimStrings->handle(Object(Illuminate/Http/Request), Object(Closure))
+#26 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePostSize.php(27): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#27 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Http/Middleware/ValidatePostSize->handle(Object(Illuminate/Http/Request), Object(Closure))
+#28 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(109): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#29 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance->handle(Object(Illuminate/Http/Request), Object(Closure))
+#30 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(61): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#31 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Http/Middleware/HandleCors->handle(Object(Illuminate/Http/Request), Object(Closure))
+#32 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(58): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#33 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Http/Middleware/TrustProxies->handle(Object(Illuminate/Http/Request), Object(Closure))
+#34 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks.php(22): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#35 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks->handle(Object(Illuminate/Http/Request), Object(Closure))
+#36 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePathEncoding.php(26): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#37 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Http/Middleware/ValidatePathEncoding->handle(Object(Illuminate/Http/Request), Object(Closure))
+#38 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(137): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#39 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#40 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate/Foundation/Http/Kernel->sendRequestThroughRouter(Object(Illuminate/Http/Request))
+#41 C:/gestion-backlinks/back-end/public/index.php(13): Illuminate/Foundation/Http/Kernel->handle(Object(Illuminate/Http/Request))
+#42 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(23): require_once('C://gestion-back...')
+#43 {main}
+"} 
+[2026-03-25 10:17:08] local.ERROR: file_put_contents(C:\gestion-backlinks\back-end\storage\framework/sessions/DDCyUH86jfqYfEi2TuxaqSN5aqmcMOi8kFSKZRZS): Failed to open stream: No such file or directory {"exception":"[object] (ErrorException(code: 0): file_put_contents(C:\\gestion-backlinks\\back-end\\storage\\framework/sessions/DDCyUH86jfqYfEi2TuxaqSN5aqmcMOi8kFSKZRZS): Failed to open stream: No such file or directory at C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Filesystem/Filesystem.php:204)
+[stacktrace]
+#0 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(258): Illuminate/Foundation/Bootstrap/HandleExceptions->handleError(2, 'file_put_conten...', 'C://gestion-back...', 204)
+#1 [internal function]: Illuminate/Foundation/Bootstrap/HandleExceptions->{closure:Illuminate/Foundation/Bootstrap/HandleExceptions::forwardsTo():257}(2, 'file_put_conten...', 'C://gestion-back...', 204)
+#2 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Filesystem/Filesystem.php(204): file_put_contents('C://gestion-back...', 'a:3:{s:6:\"_toke...', 2)
+#3 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Session/FileSessionHandler.php(89): Illuminate/Filesystem/Filesystem->put('C://gestion-back...', 'a:3:{s:6:\"_toke...', true)
+#4 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Session/Store.php(187): Illuminate/Session/FileSessionHandler->write('DDCyUH86jfqYfEi...', 'a:3:{s:6:\"_toke...')
+#5 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(248): Illuminate/Session/Store->save()
+#6 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(129): Illuminate/Session/Middleware/StartSession->saveSession(Object(Illuminate/Http/Request))
+#7 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(63): Illuminate/Session/Middleware/StartSession->handleStatefulRequest(Object(Illuminate/Http/Request), Object(Illuminate/Session/Store), Object(Closure))
+#8 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Session/Middleware/StartSession->handle(Object(Illuminate/Http/Request), Object(Closure))
+#9 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/AddQueuedCookiesToResponse.php(36): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#10 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Cookie/Middleware/AddQueuedCookiesToResponse->handle(Object(Illuminate/Http/Request), Object(Closure))
+#11 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/EncryptCookies.php(74): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#12 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Cookie/Middleware/EncryptCookies->handle(Object(Illuminate/Http/Request), Object(Closure))
+#13 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(137): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#14 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Routing/Router.php(821): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#15 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Routing/Router.php(800): Illuminate/Routing/Router->runRouteWithinStack(Object(Illuminate/Routing/Route), Object(Illuminate/Http/Request))
+#16 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Routing/Router.php(764): Illuminate/Routing/Router->runRoute(Object(Illuminate/Http/Request), Object(Illuminate/Routing/Route))
+#17 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Routing/Router.php(753): Illuminate/Routing/Router->dispatchToRoute(Object(Illuminate/Http/Request))
+#18 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate/Routing/Router->dispatch(Object(Illuminate/Http/Request))
+#19 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(180): Illuminate/Foundation/Http/Kernel->{closure:Illuminate/Foundation/Http/Kernel::dispatchToRouter():197}(Object(Illuminate/Http/Request))
+#20 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->{closure:Illuminate/Pipeline/Pipeline::prepareDestination():178}(Object(Illuminate/Http/Request))
+#21 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#22 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull->handle(Object(Illuminate/Http/Request), Object(Closure))
+#23 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#24 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(51): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#25 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Foundation/Http/Middleware/TrimStrings->handle(Object(Illuminate/Http/Request), Object(Closure))
+#26 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePostSize.php(27): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#27 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Http/Middleware/ValidatePostSize->handle(Object(Illuminate/Http/Request), Object(Closure))
+#28 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(109): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#29 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance->handle(Object(Illuminate/Http/Request), Object(Closure))
+#30 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(61): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#31 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Http/Middleware/HandleCors->handle(Object(Illuminate/Http/Request), Object(Closure))
+#32 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(58): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#33 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Http/Middleware/TrustProxies->handle(Object(Illuminate/Http/Request), Object(Closure))
+#34 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks.php(22): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#35 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks->handle(Object(Illuminate/Http/Request), Object(Closure))
+#36 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePathEncoding.php(26): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#37 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Http/Middleware/ValidatePathEncoding->handle(Object(Illuminate/Http/Request), Object(Closure))
+#38 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(137): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#39 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#40 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate/Foundation/Http/Kernel->sendRequestThroughRouter(Object(Illuminate/Http/Request))
+#41 C:/gestion-backlinks/back-end/public/index.php(13): Illuminate/Foundation/Http/Kernel->handle(Object(Illuminate/Http/Request))
+#42 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(23): require_once('C://gestion-back...')
+#43 {main}
+"} 
+[2026-03-25 10:17:46] local.ERROR: file_put_contents(C:\gestion-backlinks\back-end\storage\framework/sessions/OOWYvfAFFEQIAjClYE9KYqevLhuoYNCVIfyDUOz7): Failed to open stream: No such file or directory {"exception":"[object] (ErrorException(code: 0): file_put_contents(C:\\gestion-backlinks\\back-end\\storage\\framework/sessions/OOWYvfAFFEQIAjClYE9KYqevLhuoYNCVIfyDUOz7): Failed to open stream: No such file or directory at C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Filesystem/Filesystem.php:204)
+[stacktrace]
+#0 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(258): Illuminate/Foundation/Bootstrap/HandleExceptions->handleError(2, 'file_put_conten...', 'C://gestion-back...', 204)
+#1 [internal function]: Illuminate/Foundation/Bootstrap/HandleExceptions->{closure:Illuminate/Foundation/Bootstrap/HandleExceptions::forwardsTo():257}(2, 'file_put_conten...', 'C://gestion-back...', 204)
+#2 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Filesystem/Filesystem.php(204): file_put_contents('C://gestion-back...', 'a:3:{s:6:\"_toke...', 2)
+#3 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Session/FileSessionHandler.php(89): Illuminate/Filesystem/Filesystem->put('C://gestion-back...', 'a:3:{s:6:\"_toke...', true)
+#4 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Session/Store.php(187): Illuminate/Session/FileSessionHandler->write('OOWYvfAFFEQIAjC...', 'a:3:{s:6:\"_toke...')
+#5 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(248): Illuminate/Session/Store->save()
+#6 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(129): Illuminate/Session/Middleware/StartSession->saveSession(Object(Illuminate/Http/Request))
+#7 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(63): Illuminate/Session/Middleware/StartSession->handleStatefulRequest(Object(Illuminate/Http/Request), Object(Illuminate/Session/Store), Object(Closure))
+#8 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Session/Middleware/StartSession->handle(Object(Illuminate/Http/Request), Object(Closure))
+#9 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/AddQueuedCookiesToResponse.php(36): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#10 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Cookie/Middleware/AddQueuedCookiesToResponse->handle(Object(Illuminate/Http/Request), Object(Closure))
+#11 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/EncryptCookies.php(74): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#12 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Cookie/Middleware/EncryptCookies->handle(Object(Illuminate/Http/Request), Object(Closure))
+#13 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(137): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#14 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Routing/Router.php(821): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#15 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Routing/Router.php(800): Illuminate/Routing/Router->runRouteWithinStack(Object(Illuminate/Routing/Route), Object(Illuminate/Http/Request))
+#16 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Routing/Router.php(764): Illuminate/Routing/Router->runRoute(Object(Illuminate/Http/Request), Object(Illuminate/Routing/Route))
+#17 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Routing/Router.php(753): Illuminate/Routing/Router->dispatchToRoute(Object(Illuminate/Http/Request))
+#18 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate/Routing/Router->dispatch(Object(Illuminate/Http/Request))
+#19 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(180): Illuminate/Foundation/Http/Kernel->{closure:Illuminate/Foundation/Http/Kernel::dispatchToRouter():197}(Object(Illuminate/Http/Request))
+#20 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->{closure:Illuminate/Pipeline/Pipeline::prepareDestination():178}(Object(Illuminate/Http/Request))
+#21 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#22 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull->handle(Object(Illuminate/Http/Request), Object(Closure))
+#23 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#24 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(51): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#25 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Foundation/Http/Middleware/TrimStrings->handle(Object(Illuminate/Http/Request), Object(Closure))
+#26 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePostSize.php(27): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#27 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Http/Middleware/ValidatePostSize->handle(Object(Illuminate/Http/Request), Object(Closure))
+#28 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(109): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#29 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance->handle(Object(Illuminate/Http/Request), Object(Closure))
+#30 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(61): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#31 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Http/Middleware/HandleCors->handle(Object(Illuminate/Http/Request), Object(Closure))
+#32 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(58): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#33 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Http/Middleware/TrustProxies->handle(Object(Illuminate/Http/Request), Object(Closure))
+#34 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks.php(22): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#35 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks->handle(Object(Illuminate/Http/Request), Object(Closure))
+#36 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePathEncoding.php(26): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#37 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Http/Middleware/ValidatePathEncoding->handle(Object(Illuminate/Http/Request), Object(Closure))
+#38 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(137): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#39 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#40 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate/Foundation/Http/Kernel->sendRequestThroughRouter(Object(Illuminate/Http/Request))
+#41 C:/gestion-backlinks/back-end/public/index.php(13): Illuminate/Foundation/Http/Kernel->handle(Object(Illuminate/Http/Request))
+#42 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(23): require_once('C://gestion-back...')
+#43 {main}
+"} 
+[2026-03-25 10:34:41] local.INFO: Password reset token for admin@agency.com: 69f193e455fe3524545d9e61d5515d1f3bf939aa9e17e0af5a3a778fd57aecd7  
+[2026-03-25 10:34:41] local.INFO: Reset URL: http://localhost:8000/password/reset?token=69f193e455fe3524545d9e61d5515d1f3bf939aa9e17e0af5a3a778fd57aecd7  
+[2026-03-25 11:24:08] local.INFO: Password reset token for admin@agency.com: 02c80454c329e1a68b719e7fd1ce50d2ffbc8425a90b05ce87a9203f5041477f  
+[2026-03-25 11:24:08] local.INFO: Reset URL: http://localhost:8000/password/reset?token=02c80454c329e1a68b719e7fd1ce50d2ffbc8425a90b05ce87a9203f5041477f  
+[2026-03-25 11:33:42] local.INFO: Reset password attempt with token: 02c80454c329e1a68b719e7fd1ce50d2ffbc8425a90b05ce87a9203f5041477f  
+[2026-03-25 11:33:42] local.INFO: Password reset successful for token: 02c80454c329e1a68b719e7fd1ce50d2ffbc8425a90b05ce87a9203f5041477f  
+[2026-03-25 11:39:12] local.INFO: Reset password attempt with token: 02c80454c329e1a68b719e7fd1ce50d2ffbc8425a90b05ce87a9203f5041477f  
+[2026-03-25 11:39:12] local.INFO: Password reset successful for token: 02c80454c329e1a68b719e7fd1ce50d2ffbc8425a90b05ce87a9203f5041477f  
+[2026-03-25 12:00:01] local.INFO: Reset password attempt with token: 69f193e455fe3524545d9e61d5515d1f3bf939aa9e17e0af5a3a778fd57aecd7 for email: admin@agency.com  
+[2026-03-25 12:00:01] local.INFO: Password reset successful for user: admin@agency.com  
+[2026-03-25 12:01:26] local.INFO: Password reset token for staff@agency.com: 94f62e2b4f55f7110d6ea2b42da14340a3a52f7c4e6a204cc04d93b1be973590  
+[2026-03-25 12:01:26] local.INFO: Reset URL: http://localhost:8000/password/reset?token=94f62e2b4f55f7110d6ea2b42da14340a3a52f7c4e6a204cc04d93b1be973590  
+[2026-03-25 13:08:28] local.INFO: Reset password attempt with token: 94f62e2b4f55f7110d6ea2b42da14340a3a52f7c4e6a204cc04d93b1be973590 for email: Sttaf@agency.com  
+[2026-03-25 13:08:28] local.ERROR: Class "App\Models\Staff" not found {"exception":"[object] (Error(code: 0): Class \"App\\Models\\Staff\" not found at C:/gestion-backlinks/back-end/app/Http/Controllers/AuthController.php:130)
+[stacktrace]
+#0 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Routing/Controller.php(54): App/Http/Controllers/AuthController->resetPassword(Object(Illuminate/Http/Request))
+#1 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(43): Illuminate/Routing/Controller->callAction('resetPassword', Array)
+#2 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Routing/Route.php(265): Illuminate/Routing/ControllerDispatcher->dispatch(Object(Illuminate/Routing/Route), Object(App/Http/Controllers/AuthController), 'resetPassword')
+#3 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Routing/Route.php(211): Illuminate/Routing/Route->runController()
+#4 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Routing/Router.php(822): Illuminate/Routing/Route->run()
+#5 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(180): Illuminate/Routing/Router->{closure:Illuminate/Routing/Router::runRouteWithinStack():821}(Object(Illuminate/Http/Request))
+#6 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(50): Illuminate/Pipeline/Pipeline->{closure:Illuminate/Pipeline/Pipeline::prepareDestination():178}(Object(Illuminate/Http/Request))
+#7 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Routing/Middleware/SubstituteBindings->handle(Object(Illuminate/Http/Request), Object(Closure))
+#8 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(137): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#9 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Routing/Router.php(821): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#10 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Routing/Router.php(800): Illuminate/Routing/Router->runRouteWithinStack(Object(Illuminate/Routing/Route), Object(Illuminate/Http/Request))
+#11 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Routing/Router.php(764): Illuminate/Routing/Router->runRoute(Object(Illuminate/Http/Request), Object(Illuminate/Routing/Route))
+#12 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Routing/Router.php(753): Illuminate/Routing/Router->dispatchToRoute(Object(Illuminate/Http/Request))
+#13 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate/Routing/Router->dispatch(Object(Illuminate/Http/Request))
+#14 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(180): Illuminate/Foundation/Http/Kernel->{closure:Illuminate/Foundation/Http/Kernel::dispatchToRouter():197}(Object(Illuminate/Http/Request))
+#15 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->{closure:Illuminate/Pipeline/Pipeline::prepareDestination():178}(Object(Illuminate/Http/Request))
+#16 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#17 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull->handle(Object(Illuminate/Http/Request), Object(Closure))
+#18 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#19 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(51): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#20 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Foundation/Http/Middleware/TrimStrings->handle(Object(Illuminate/Http/Request), Object(Closure))
+#21 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePostSize.php(27): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#22 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Http/Middleware/ValidatePostSize->handle(Object(Illuminate/Http/Request), Object(Closure))
+#23 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(109): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#24 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance->handle(Object(Illuminate/Http/Request), Object(Closure))
+#25 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(74): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#26 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Http/Middleware/HandleCors->handle(Object(Illuminate/Http/Request), Object(Closure))
+#27 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(58): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#28 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Http/Middleware/TrustProxies->handle(Object(Illuminate/Http/Request), Object(Closure))
+#29 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks.php(22): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#30 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks->handle(Object(Illuminate/Http/Request), Object(Closure))
+#31 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePathEncoding.php(26): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#32 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Http/Middleware/ValidatePathEncoding->handle(Object(Illuminate/Http/Request), Object(Closure))
+#33 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(137): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}(Object(Illuminate/Http/Request))
+#34 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#35 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate/Foundation/Http/Kernel->sendRequestThroughRouter(Object(Illuminate/Http/Request))
+#36 C:/gestion-backlinks/back-end/public/index.php(13): Illuminate/Foundation/Http/Kernel->handle(Object(Illuminate/Http/Request))
+#37 C:/gestion-backlinks/back-end/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(23): require_once('C://gestion-back...')
+#38 {main}
+"} 
+[2026-03-25 13:08:49] local.INFO: Reset password attempt with token: 94f62e2b4f55f7110d6ea2b42da14340a3a52f7c4e6a204cc04d93b1be973590 for email: Staff@agency.com  
+[2026-03-25 13:08:49] local.INFO: User found in User table: staff@agency.com  
+[2026-03-25 13:08:49] local.INFO: Password reset successful for User: staff@agency.com  
+[2026-03-25 13:44:23] local.INFO: Password reset token for User staff@agency.com: b9decf50406347596614bffac047d97460eca33c3272ee82b3cba59ccb1a29fb  
+[2026-03-25 13:44:23] local.INFO: Reset URL: http://localhost:8000/password/reset/b9decf50406347596614bffac047d97460eca33c3272ee82b3cba59ccb1a29fb  
+[2026-03-25 13:45:33] local.INFO: Reset password attempt with token: b9decf50406347596614bffac047d97460eca33c3272ee82b3cba59ccb1a29fb for email: staff@agency.com  
+[2026-03-25 13:45:33] local.INFO: User found in User table: staff@agency.com  
+[2026-03-25 13:45:33] local.INFO: Password reset successful for User: staff@agency.com  

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Staff;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -48,7 +49,15 @@ class AuthController extends Controller
             'email' => 'required|email'
         ]);
 
+        // Recherche multi-table: d'abord User, puis Staff
         $user = User::where('email', $request->email)->first();
+        $userType = 'User';
+        
+        if (!$user) {
+            // Si pas trouvé dans User, chercher dans Staff
+            $user = Staff::where('email', $request->email)->first();
+            $userType = 'Staff';
+        }
 
         if (!$user) {
             return response()->json([
@@ -65,7 +74,11 @@ class AuthController extends Controller
         // Dans un vrai projet, vous enverriez un email avec un lien de réinitialisation
         
         // Simulation d'envoi d'email - dans la vraie vie, utilisez Mail::send()
-        \Log::info("Password reset token for {$user->email}: {$token}");
+        \Log::info("Password reset token for {$userType} {$user->email}: {$token}");
+        
+        // Générer l'URL de reset
+        $resetUrl = url('/password/reset/' . $token);
+        \Log::info("Reset URL: {$resetUrl}");
         
         // Pour cette démo, on retourne juste un message de succès
         // En production, vous enverriez un email avec le lien: 
@@ -73,7 +86,9 @@ class AuthController extends Controller
         
         return response()->json([
             'message' => 'Un email de réinitialisation a été envoyé à votre adresse email.',
-            'debug_token' => app()->environment('local') ? $token : null // Debug uniquement en local
+            'debug_token' => app()->environment('local') ? $token : null, // Debug uniquement en local
+            'reset_url' => app()->environment('local') ? $resetUrl : null, // Debug URL en local
+            'user_type' => app()->environment('local') ? $userType : null // Debug user type en local
         ]);
     }
 
@@ -82,25 +97,57 @@ class AuthController extends Controller
         $request->validate([
             'email' => 'required|email',
             'token' => 'required|string',
-            'password' => 'required|string|min:6|confirmed'
+            'password' => 'required|string|min:8|confirmed'
         ]);
 
-        $user = User::where('email', $request->email)->first();
-
+        // Pour cette démo, on simule une table password_resets
+        // Dans un vrai projet, vous auriez une vraie table password_resets
+        
+        // Simulation de validation du token dans password_resets
+        $token = $request->token;
+        $email = $request->email;
+        
+        \Log::info("Reset password attempt with token: {$token} for email: {$email}");
+        
+        // Pour cette démo, on considère que le token est valide s'il fait au moins 20 caractères
+        // En production, vous vérifieriez dans la table password_resets:
+        // - Token existe
+        // - Token n'a pas expiré (généralement 1 heure)
+        // - Token correspond à l'email
+        
+        if (strlen($token) < 20) {
+            return response()->json([
+                'message' => 'Invalid reset token'
+            ], 400);
+        }
+        
+        // Recherche multi-table: d'abord User, puis Staff
+        $user = User::where('email', $email)->first();
+        $userType = 'User';
+        
+        if (!$user) {
+            // Si pas trouvé dans User, chercher dans Staff
+            $user = Staff::where('email', $email)->first();
+            $userType = 'Staff';
+        }
+        
         if (!$user) {
             return response()->json([
-                'message' => 'Utilisateur non trouvé'
+                'message' => 'User not found with this email address'
             ], 404);
         }
-
-        // Vérifier le token (dans un vrai projet, vous vérifieriez dans la table password_resets)
-        // Pour cette démo, on accepte directement le reset
         
-        $user->password = Hash::make($request->password);
-        $user->save();
-
+        \Log::info("User found in {$userType} table: {$user->email}");
+        
+        // Hacher le nouveau mot de passe et le sauvegarder
+        $user->update([
+            'password' => Hash::make($request->password)
+        ]);
+        
+        \Log::info("Password reset successful for {$userType}: {$user->email}");
+        
         return response()->json([
-            'message' => 'Mot de passe réinitialisé avec succès'
+            'message' => 'Password has been reset successfully'
         ]);
     }
 
