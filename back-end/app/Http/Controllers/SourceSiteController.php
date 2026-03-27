@@ -20,7 +20,7 @@ class SourceSiteController extends Controller
 
     public function all()
     {
-        return SourceSite::orderBy('domain', 'asc')->get();
+        return SourceSite::orderBy('created_at', 'desc')->get();
     }
 
     public function grouped()
@@ -46,7 +46,7 @@ class SourceSiteController extends Controller
                 \DB::raw('MAX(created_at) as last_created')
             ])
             ->groupBy('domain')
-            ->orderBy('domain', 'asc')
+            ->orderBy('last_created', 'desc')
             ->get();
 
         // Ajouter le nombre de backlinks pour chaque domaine

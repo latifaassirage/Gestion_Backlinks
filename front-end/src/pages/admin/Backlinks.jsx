@@ -143,9 +143,9 @@ export default function Backlinks() {
 
   const fetchClients = async () => {
     try {
-      const res = await api.get("/all-clients");
-      console.log("All clients response:", res.data);
-      setClients(res.data);
+      const res = await api.get("/clients?page=1&per_page=50"); // ✅ Pagination limitée pour dropdown
+      console.log("Clients response:", res.data);
+      setClients(res.data.data || []);
     } catch (error) {
       console.error("Error fetching clients:", error);
     }
@@ -153,9 +153,9 @@ export default function Backlinks() {
 
   const fetchSources = async () => {
     try {
-      const res = await api.get("/all-sources");
-      console.log("All sources response:", res.data);
-      setSources(res.data.data || res.data || []); 
+      const res = await api.get("/sources?page=1&per_page=50"); // ✅ Pagination limitée pour dropdown
+      console.log("Sources response:", res.data);
+      setSources(res.data.data || []); 
     } catch (error) {
       console.error("Error fetching sources:", error);
     }
@@ -375,7 +375,7 @@ export default function Backlinks() {
       await fetchBacklinks(1);
       
       // Rafraîchir les données summary pour voir le changement
-      await fetchSummarySources();
+      await fetchSummarySources(summaryPagination.current_page);
       console.log('Backlink link type updated successfully!');
     } catch (error) {
       console.error('Error updating backlink link type:', error);
@@ -388,7 +388,7 @@ export default function Backlinks() {
     
     try {
       await api.delete(`/summary-sources/${sourceId}`);
-      await fetchSummarySources(); // Rafraîchir la liste après suppression
+      await fetchSummarySources(summaryPagination.current_page); // Rafraîchir la liste après suppression
       console.log('Summary source deleted successfully!');
     } catch (error) {
       console.error('Error deleting summary source:', error);
@@ -404,8 +404,12 @@ export default function Backlinks() {
 
   
   const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= summaryPagination.last_page) {
+    // Validation stricte pour éviter les réinitialisations accidentelles
+    if (newPage >= 1 && newPage <= summaryPagination.last_page && newPage !== summaryPagination.current_page) {
+      console.log(`Changing to page ${newPage} from page ${summaryPagination.current_page}`);
       fetchSummarySources(newPage);
+    } else {
+      console.log(`Invalid page change: ${newPage} (current: ${summaryPagination.current_page}, max: ${summaryPagination.last_page})`);
     }
   };
 
@@ -482,8 +486,12 @@ export default function Backlinks() {
 
   // Fonctions de pagination pour les backlinks
   const handleBacklinksPageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= backlinksPagination.last_page) {
+    // Validation stricte pour éviter les réinitialisations accidentelles
+    if (newPage >= 1 && newPage <= backlinksPagination.last_page && newPage !== backlinksPagination.current_page) {
+      console.log(`Changing backlinks to page ${newPage} from page ${backlinksPagination.current_page}`);
       fetchBacklinks(newPage);
+    } else {
+      console.log(`Invalid backlinks page change: ${newPage} (current: ${backlinksPagination.current_page}, max: ${backlinksPagination.last_page})`);
     }
   };
 
@@ -531,18 +539,33 @@ export default function Backlinks() {
   // Rafraîchissement automatique des données summary toutes les 30 secondes
   useEffect(() => {
     const interval = setInterval(() => {
-      fetchSummarySources();
-      fetchBacklinks(); // Rafraîchir aussi les backlinks pour garantir la cohérence
+      // Préserver la page actuelle lors du rafraîchissement
+      // Seulement rafraîchir si nous ne sommes pas déjà sur la page 1 ou si les données sont valides
+      const currentPage = summaryPagination.current_page;
+      const totalPages = summaryPagination.last_page;
+      
+      if (currentPage >= 1 && currentPage <= totalPages) {
+        fetchSummarySources(currentPage);
+        fetchBacklinks(backlinksPagination.current_page); // Rafraîchir aussi les backlinks pour garantir la cohérence
+      }
     }, 30000); // 30 secondes
 
     return () => clearInterval(interval); // Nettoyer l'intervalle quand le composant est démonté
-  }, []);
+  }, [summaryPagination.current_page, summaryPagination.last_page, backlinksPagination.current_page]);
 
   // Rafraîchissement quand le modal est ouvert
   useEffect(() => {
     if (showSourceSitesView) {
-      fetchSummarySources();
-      fetchBacklinks();
+      // Préserver la page actuelle lors du rafraîchissement du modal
+      // Seulement rafraîchir si nécessaire pour éviter les appels inutiles
+      const currentPage = summaryPagination.current_page;
+      const totalPages = summaryPagination.last_page;
+      
+      if (currentPage >= 1 && currentPage <= totalPages && summarySources.length === 0) {
+        console.log('Refreshing summary sources on modal open');
+        fetchSummarySources(currentPage);
+        fetchBacklinks(backlinksPagination.current_page);
+      }
     }
   }, [showSourceSitesView]);
 

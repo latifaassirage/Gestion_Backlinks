@@ -20,15 +20,15 @@ class ClientController extends Controller
 
     public function all()
     {
-        return Client::orderBy('company_name', 'asc')->get();
+        return Client::orderBy('created_at', 'desc')->get();
     }
 
     public function unique()
     {
         // Retourne les clients uniques par email pour éviter les doublons
-        return Client::select('id', 'company_name', 'contact_email', 'created_at')
+        return Client::select('id', 'company_name', 'contact_email', 'website', 'city', 'state', 'notes', 'created_at')
             ->distinct('contact_email')
-            ->orderBy('company_name', 'asc')
+            ->orderBy('created_at', 'desc')
             ->get();
     }
 

@@ -203,7 +203,7 @@ export default function Reports() {
               case 'quality_score':
                 return `${backlink.dynamic_quality_score || 3}/5`;
               case 'cost':
-                return backlink.cost == 0 || backlink.cost === "0" || backlink.cost === null || backlink.cost === undefined ? 
+                return backlink.cost === 0 || backlink.cost === "0" || backlink.cost === null || backlink.cost === undefined ? 
                   'Free' : 
                   `$${backlink.cost || '0'}`;
               default:
@@ -380,7 +380,7 @@ export default function Reports() {
                 row[columnLabels[col]] = `${backlink.dynamic_quality_score || 3}/5`;
                 break;
               case 'cost':
-                row[columnLabels[col]] = backlink.cost == 0 || backlink.cost === "0" || backlink.cost === null || backlink.cost === undefined ? 
+                row[columnLabels[col]] = backlink.cost === 0 || backlink.cost === "0" || backlink.cost === null || backlink.cost === undefined ? 
                   'Free' : 
                   backlink.cost || 0;
                 break;
@@ -876,7 +876,7 @@ export default function Reports() {
                       </td>
                       <td className="quality">{renderQualityStars(backlink.dynamic_quality_score)}</td>
                       <td className="cost">
-                      {backlink.cost == 0 || backlink.cost === "0" || backlink.cost === null || backlink.cost === undefined ? 
+                      {backlink.cost === 0 || backlink.cost === "0" || backlink.cost === null || backlink.cost === undefined ? 
                         <span className="cost-free">Free</span> : 
                         backlink.cost || '0'
                       }

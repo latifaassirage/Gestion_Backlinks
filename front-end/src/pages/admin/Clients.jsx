@@ -120,14 +120,13 @@ export default function Clients() {
 
   const fetchClients = async (page = 1) => {
     try {
-      const res = await api.get("/unique-clients");
-      setClients(res.data || []);
-      // Pas de pagination pour les clients uniques
+      const res = await api.get(`/clients?page=${page}&per_page=10`);
+      setClients(res.data.data || []);
       setPagination({
-        current_page: 1,
-        last_page: 1,
-        per_page: res.data?.length || 10,
-        total: res.data?.length || 0
+        current_page: res.data.current_page || 1,
+        last_page: res.data.last_page || 1,
+        per_page: res.data.per_page || 10,
+        total: res.data.total || 0
       });
     } catch (error) {
       console.error("Error fetching clients:", error);
@@ -245,7 +244,20 @@ export default function Clients() {
                   <tr key={client.id}>
                     <td>{client.company_name}</td>
                     <td>{client.contact_email}</td>
-                    <td><a href={`https://${client.website}`} target="_blank" rel="noopener noreferrer">{client.website}</a></td>
+                    <td>
+                    {client.website ? (
+                      <a 
+                        href={client.website.startsWith('http') ? client.website : `https://${client.website}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        style={{ color: '#3498db', textDecoration: 'underline' }}
+                      >
+                        {client.website}
+                      </a>
+                    ) : (
+                      <span style={{ color: '#999' }}>No website</span>
+                    )}
+                  </td>
                     <td>{client.city || '-'}</td>
                     <td>{client.state || '-'}</td>
                     <td>{client.notes || '-'}</td>
@@ -263,7 +275,7 @@ export default function Clients() {
         </div>
 
         {/* Contrôles de pagination */}
-        {pagination.total > 0 && (
+        {pagination.total > 10 && (
           <div className="pagination-controls">
             <div className="pagination-info">
               <span>

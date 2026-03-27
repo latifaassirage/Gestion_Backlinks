@@ -46,17 +46,17 @@ export default function StaffBacklinks() {
   const fetchData = async (page = 1) => {
     try {
       setLoading(true);
-      const [backlinksRes, clientsRes, sourcesRes] = await Promise.all([
-        api.get(`/backlinks?page=${page}&per_page=${itemsPerPage}`),
-        api.get("/all-clients"),
-        api.get("/all-sources")
+      const res = await Promise.all([
+        api.get(`/backlinks?page=${page}&per_page=${itemsPerPage}`), // 
+        api.get("/clients?page=1&per_page=50"), // 
+        api.get("/sources?page=1&per_page=50")  // 
       ]);
-      setBacklinks(backlinksRes.data.data || []);
-      setTotal(backlinksRes.data.total || 0);
-      setTotalPages(backlinksRes.data.last_page || 1);
-      setCurrentPage(backlinksRes.data.current_page || 1);
-      setClients(clientsRes.data || []);
-      setSources(sourcesRes.data || []);
+      setBacklinks(res[0].data.data || []);
+      setTotal(res[0].data.total || 0);
+      setTotalPages(res[0].data.last_page || 1);
+      setCurrentPage(res[0].data.current_page || 1);
+      setClients(res[1].data.data || []);
+      setSources(res[2].data.data || []);
     } catch (error) {
       console.error("Error fetching data:", error);
       setBacklinks([]);
