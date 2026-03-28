@@ -15,10 +15,23 @@ class BacklinkController extends Controller
     {
         $perPage = $request->get('per_page', 10); // 10 par défaut
         $page = $request->get('page', 1); // Page 1 par défaut
+        $search = $request->get('search', ''); // Terme de recherche
         
-        $backlinks = Backlink::with(['client','sourceSite'])
-            ->orderBy('created_at', 'desc')
-            ->paginate($perPage, ['*'], 'page', $page);
+        $query = Backlink::with(['client','sourceSite'])->orderBy('created_at', 'desc');
+        
+        // Ajouter la recherche si un terme est fourni
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->whereHas('client', function($clientQuery) use ($search) {
+                    $clientQuery->where('company_name', 'LIKE', '%' . $search . '%');
+                })
+                ->orWhereHas('sourceSite', function($sourceQuery) use ($search) {
+                    $sourceQuery->where('domain', 'LIKE', '%' . $search . '%');
+                });
+            });
+        }
+        
+        $backlinks = $query->paginate($perPage, ['*'], 'page', $page);
 
         return $backlinks;
     }

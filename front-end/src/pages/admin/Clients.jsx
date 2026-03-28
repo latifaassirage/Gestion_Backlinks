@@ -115,12 +115,16 @@ export default function Clients() {
     total: 0
   }); 
 
+  // État pour la recherche
+  const [searchTerm, setSearchTerm] = useState('');
+
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const isAdmin = user.role === 'admin';
 
-  const fetchClients = async (page = 1) => {
+  const fetchClients = async (page = 1, search = '') => {
     try {
-      const res = await api.get(`/clients?page=${page}&per_page=10`);
+      const searchParam = search ? `&search=${encodeURIComponent(search)}` : '';
+      const res = await api.get(`/clients?page=${page}&per_page=10${searchParam}`);
       setClients(res.data.data || []);
       setPagination({
         current_page: res.data.current_page || 1,
@@ -135,7 +139,26 @@ export default function Clients() {
     }
   };
 
-  useEffect(() => { fetchClients(); }, []);
+  useEffect(() => { fetchClients(1, searchTerm); }, []);
+
+  // Gestion des doublons - Vérifier si l'email existe déjà
+  const checkDuplicateEmail = (email, excludeId = null) => {
+    return clients.some(client => 
+      client.contact_email === email && 
+      client.id !== excludeId
+    );
+  };
+
+  const handleEdit = (client) => {
+    setEditClient(client);
+    setShowModal(true);
+  };
+
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    fetchClients(1, value); // Toujours retourner à la page 1 lors de la recherche
+  };
 
   const handleAddClient = async (newClient) => {
     try {
@@ -144,13 +167,20 @@ export default function Clients() {
         await api.put(`/clients/${editClient.id}`, newClient);
         setEditClient(null);
       } else {
-        // Create
+        // Create - Le backend bloquera automatiquement si doublon
         await api.post("/clients", newClient);
       }
       // Rafraîchir la liste avec pagination
-      fetchClients(1);
+      fetchClients(1, searchTerm);
     } catch (error) {
       console.error("Error saving client:", error);
+      // Afficher les erreurs de validation du backend (doublons inclus)
+      if (error.response?.status === 422 && error.response?.data?.errors) {
+        const errorMessages = Object.values(error.response.data.errors).flat();
+        alert(errorMessages.join(', '));
+      } else {
+        alert("Error saving client. Please try again.");
+      }
     }
   };
 
@@ -159,21 +189,16 @@ export default function Clients() {
     try {
       await api.delete(`/clients/${id}`);
       // Rafraîchir la liste avec pagination
-      fetchClients(1);
+      fetchClients(1, searchTerm);
     } catch (error) {
       console.error("Error deleting client:", error);
     }
   };
 
-  const handleEdit = (client) => {
-    setEditClient(client);
-    setShowModal(true);
-  };
-
   // Fonctions de navigation pour la pagination
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= pagination.last_page) {
-      fetchClients(newPage);
+      fetchClients(newPage, searchTerm);
     }
   };
 
@@ -212,7 +237,19 @@ export default function Clients() {
       <Navbar />
       <div className="clients-content">
         <div className="clients-header">
-          <h2>Clients Management</h2>
+          <div className="header-left">
+            <h2>Clients Management</h2>
+            <div className="search-container">
+              <span className="search-icon">🔍</span>
+              <input 
+                type="text"
+                placeholder="Search by Company Name, Email, or Website..."
+                value={searchTerm}
+                onChange={handleSearch}
+                className="search-input"
+              />
+            </div>
+          </div>
           {isAdmin && (
             <button className="add-client-btn" onClick={() => setShowModal(true)}>
               Add Client

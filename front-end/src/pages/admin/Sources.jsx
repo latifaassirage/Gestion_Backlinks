@@ -125,12 +125,16 @@ export default function Sources() {
     total: 0
   });
 
+  // État pour la recherche
+  const [searchTerm, setSearchTerm] = useState('');
+
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const isAdmin = user.role === 'admin';
 
-  const fetchSources = async (page = 1) => {
+  const fetchSources = async (page = 1, search = '') => {
     try {
-      const res = await api.get(`/sources?page=${page}&per_page=10`);
+      const searchParam = search ? `&search=${encodeURIComponent(search)}` : '';
+      const res = await api.get(`/sources?page=${page}&per_page=10${searchParam}`);
       console.log("Sources API response:", res.data);
       setSources(res.data.data || []);
       setPagination({
@@ -147,37 +151,50 @@ export default function Sources() {
     }
   };
 
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this source?")) return;
+    try {
+      await api.delete(`/sources/${id}`);
+      // Rafraîchir la liste avec pagination
+      fetchSources(1, searchTerm);
+    } catch (error) {
+      console.error("Error deleting source:", error);
+    }
+  };
+
   const handleSaveSource = async (newSource, id) => {
     try {
       if (id) {
         // Edit
         await api.put(`/sources/${id}`, newSource);
       } else {
-        // Add
+        // Add - Le backend bloquera automatiquement si doublon
         await api.post("/sources", newSource);
       }
       // Rafraîchir la liste avec pagination
-      fetchSources(1);
+      fetchSources(pagination.current_page, searchTerm);
     } catch (error) {
       console.error("Error saving source:", error);
+      // Afficher les erreurs de validation du backend (doublons inclus)
+      if (error.response?.status === 422 && error.response?.data?.errors) {
+        const errorMessages = Object.values(error.response.data.errors).flat();
+        alert(errorMessages.join(', '));
+      } else {
+        alert("Error saving source. Please try again.");
+      }
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this source?")) return;
-    try {
-      await api.delete(`/sources/${id}`);
-      // Rafraîchir la liste avec pagination
-      fetchSources(1);
-    } catch (error) {
-      console.error("Error deleting source:", error);
-    }
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    fetchSources(1, value); // Toujours retourner à la page 1 lors de la recherche
   };
 
   // Fonctions de navigation pour la pagination
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= pagination.last_page) {
-      fetchSources(newPage);
+      fetchSources(newPage, searchTerm);
     }
   };
 
@@ -216,7 +233,7 @@ export default function Sources() {
     return numScore > 30 ? 'spam-danger' : 'spam-safe';
   };
 
-  useEffect(() => { fetchSources(1); }, []);
+  useEffect(() => { fetchSources(1, searchTerm); }, [searchTerm]);
 
   if (loading) return <div className="loading">Loading sources...</div>;
 
@@ -225,7 +242,19 @@ export default function Sources() {
       <Navbar />
       <div className="sources-content">
         <div className="sources-header">
-          <h2>Source Websites Management</h2>
+          <div className="header-left">
+            <h2>Source Websites Management</h2>
+            <div className="search-container">
+              <span className="search-icon">🔍</span>
+              <input 
+                type="text"
+                placeholder="Search by Domain Name..."
+                value={searchTerm}
+                onChange={handleSearch}
+                className="search-input"
+              />
+            </div>
+          </div>
           {isAdmin && (
             <button className="add-source-btn" onClick={() => { setEditingSource(null); setShowModal(true); }}>
               ➕ Add Source

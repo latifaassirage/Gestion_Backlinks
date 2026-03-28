@@ -11,9 +11,20 @@ class ClientController extends Controller
     {
         $perPage = $request->get('per_page', 10); // 10 par défaut
         $page = $request->get('page', 1); // Page 1 par défaut
+        $search = $request->get('search', ''); // Terme de recherche
         
-        $clients = Client::orderBy('created_at', 'desc')
-            ->paginate($perPage, ['*'], 'page', $page);
+        $query = Client::orderBy('created_at', 'desc');
+        
+        // Ajouter la recherche si un terme est fourni
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('company_name', 'LIKE', '%' . $search . '%')
+                  ->orWhere('contact_email', 'LIKE', '%' . $search . '%')
+                  ->orWhere('website', 'LIKE', '%' . $search . '%');
+            });
+        }
+        
+        $clients = $query->paginate($perPage, ['*'], 'page', $page);
 
         return $clients;
     }
@@ -43,6 +54,17 @@ class ClientController extends Controller
             'notes'=>'nullable|string'
         ]);
 
+        // Vérifier si l'email existe déjà (blocage définitif)
+        if (!empty($data['contact_email'])) {
+            $existingClient = Client::where('contact_email', $data['contact_email'])->first();
+            if ($existingClient) {
+                return response()->json([
+                    'message' => 'A client with this email already exists.',
+                    'errors' => ['contact_email' => ['This email is already registered.']]
+                ], 422);
+            }
+        }
+
         $client = Client::create($data);
         return response()->json($client, 201);
     }
@@ -63,6 +85,20 @@ class ClientController extends Controller
             'state'=>'nullable|string|max:100',
             'notes'=>'nullable|string'
         ]);
+
+        // Vérifier si l'email existe déjà (blocage définitif)
+        if (isset($data['contact_email']) && !empty($data['contact_email'])) {
+            $existingClient = Client::where('contact_email', $data['contact_email'])
+                ->where('id', '!=', $id)
+                ->first();
+            if ($existingClient) {
+                return response()->json([
+                    'message' => 'A client with this email already exists.',
+                    'errors' => ['contact_email' => ['This email is already registered.']]
+                ], 422);
+            }
+        }
+
         $client->update($data);
         return response()->json($client);
     }

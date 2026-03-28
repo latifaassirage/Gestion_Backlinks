@@ -11,9 +11,16 @@ class SourceSiteController extends Controller
     {
         $perPage = $request->get('per_page', 10); // 10 par défaut
         $page = $request->get('page', 1); // Page 1 par défaut
+        $search = $request->get('search', ''); // Terme de recherche
         
-        $sources = SourceSite::orderBy('created_at', 'desc')
-            ->paginate($perPage, ['*'], 'page', $page);
+        $query = SourceSite::orderBy('created_at', 'desc');
+        
+        // Ajouter la recherche si un terme est fourni
+        if ($search) {
+            $query->where('domain', 'LIKE', '%' . $search . '%');
+        }
+        
+        $sources = $query->paginate($perPage, ['*'], 'page', $page);
 
         return $sources;
     }
@@ -73,6 +80,15 @@ class SourceSiteController extends Controller
             'notes'=>'nullable|string',
         ]);
 
+        // Vérification explicite anti-doublons avec message clair
+        $existingSource = SourceSite::where('domain', $data['domain'])->first();
+        if ($existingSource) {
+            return response()->json([
+                'message' => 'A source website with this domain already exists.',
+                'errors' => ['domain' => ['This domain is already registered.']]
+            ], 422);
+        }
+
         $source = SourceSite::create($data);
         
         // Créer automatiquement un enregistrement dans source_summaries si n'existe pas
@@ -109,6 +125,19 @@ class SourceSiteController extends Controller
             'spam_score'=>'sometimes|required|integer|min:0|max:100',
             'notes'=>'nullable|string',
         ]);
+
+        // Vérification explicite anti-doublons avec message clair
+        if (isset($data['domain'])) {
+            $existingSource = SourceSite::where('domain', $data['domain'])
+                ->where('id', '!=', $id)
+                ->first();
+            if ($existingSource) {
+                return response()->json([
+                    'message' => 'A source website with this domain already exists.',
+                    'errors' => ['domain' => ['This domain is already registered.']]
+                ], 422);
+            }
+        }
         
         $source->update($data);
         

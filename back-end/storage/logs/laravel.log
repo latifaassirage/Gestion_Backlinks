@@ -14700,3 +14700,7 @@ Did you mean one of these?
 [2026-03-27 14:00:06] local.INFO: Backlink synchronized to source_summaries {"backlink_id":23,"website":"footballtransfers.com","action":"sync"} 
 [2026-03-27 14:35:36] local.INFO: Backlink synchronized to source_summaries {"backlink_id":24,"website":"cntraveler.com","action":"sync"} 
 [2026-03-27 14:42:54] local.INFO: Backlink synchronized to source_summaries {"backlink_id":25,"website":"investopedia.com","action":"sync"} 
+[2026-03-27 15:42:46] local.INFO: Backlink synchronized to source_summaries {"backlink_id":26,"website":"investopedia.com","action":"sync"} 
+[2026-03-27 15:57:35] local.INFO: Backlink synchronized to source_summaries {"backlink_id":27,"website":"cvent.com","action":"sync"} 
+[2026-03-28 00:19:18] local.INFO: Backlink synchronized to source_summaries {"backlink_id":28,"website":"theguardian.com","action":"sync"} 
+[2026-03-28 00:22:32] local.INFO: Backlink synchronized to source_summaries {"backlink_id":29,"website":"theguardian.com","action":"sync"} 

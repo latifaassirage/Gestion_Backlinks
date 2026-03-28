@@ -57,6 +57,9 @@ export default function Backlinks() {
     traffic_estimated: 0
   });
 
+  // État pour la recherche
+  const [searchTerm, setSearchTerm] = useState('');
+
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const isAdmin = user.role === 'admin';
 
@@ -124,9 +127,10 @@ export default function Backlinks() {
     }
   };
 
-  const fetchBacklinks = async (page = 1) => {
+  const fetchBacklinks = async (page = 1, search = '') => {
     try {
-      const res = await api.get(`/backlinks?page=${page}&per_page=10`);
+      const searchParam = search ? `&search=${encodeURIComponent(search)}` : '';
+      const res = await api.get(`/backlinks?page=${page}&per_page=10${searchParam}`);
       setBacklinks(res.data.data || []);
       setBacklinksPagination({
         current_page: res.data.current_page || 1,
@@ -408,6 +412,7 @@ export default function Backlinks() {
     if (newPage >= 1 && newPage <= summaryPagination.last_page && newPage !== summaryPagination.current_page) {
       console.log(`Changing to page ${newPage} from page ${summaryPagination.current_page}`);
       fetchSummarySources(newPage);
+      fetchBacklinks(newPage, searchTerm); // Inclure le terme de recherche
     } else {
       console.log(`Invalid page change: ${newPage} (current: ${summaryPagination.current_page}, max: ${summaryPagination.last_page})`);
     }
@@ -489,7 +494,7 @@ export default function Backlinks() {
     // Validation stricte pour éviter les réinitialisations accidentelles
     if (newPage >= 1 && newPage <= backlinksPagination.last_page && newPage !== backlinksPagination.current_page) {
       console.log(`Changing backlinks to page ${newPage} from page ${backlinksPagination.current_page}`);
-      fetchBacklinks(newPage);
+      fetchBacklinks(newPage, searchTerm); // Inclure le terme de recherche
     } else {
       console.log(`Invalid backlinks page change: ${newPage} (current: ${backlinksPagination.current_page}, max: ${backlinksPagination.last_page})`);
     }
@@ -533,8 +538,14 @@ export default function Backlinks() {
   };
 
   useEffect(() => { 
-    fetchBacklinks(); fetchClients(); fetchSources(); fetchSummarySources(); fetchTypes();
+    fetchBacklinks(1, searchTerm); fetchClients(); fetchSources(); fetchSummarySources(); fetchTypes();
   }, []);
+
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    fetchBacklinks(1, value); // Toujours retourner à la page 1 lors de la recherche
+  };
 
   // Rafraîchissement automatique des données summary toutes les 30 secondes
   useEffect(() => {
@@ -786,7 +797,19 @@ export default function Backlinks() {
       <Navbar />
       <div className="backlinks-content">
         <div className="backlinks-header">
-          <h2>Backlinks Management</h2>
+          <div className="header-left">
+            <h2>Backlinks Management</h2>
+            <div className="search-container">
+              <span className="search-icon">🔍</span>
+              <input 
+                type="text"
+                placeholder="Search by Client Name or Source Website..."
+                value={searchTerm}
+                onChange={handleSearch}
+                className="search-input"
+              />
+            </div>
+          </div>
           <div className="header-buttons">
             <button className="source-sites-view-btn" onClick={() => setShowSourceSitesView(true)}>
               Source Sites View
